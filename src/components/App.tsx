@@ -1,27 +1,17 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React from 'react';
-import {SafeAreaView, ScrollView, StyleSheet} from 'react-native';
 import {Provider as PaperProvider} from 'react-native-paper';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
-import Home from './screens/Home';
+import {NavigationContainer} from '@react-navigation/native';
+import NavigationStack from '../navigation';
 
 function App(): JSX.Element {
   return (
-    <PaperProvider>
-      <SafeAreaProvider>
-        <SafeAreaView>
-          <ScrollView contentInsetAdjustmentBehavior="automatic">
-            <Home />
-          </ScrollView>
-        </SafeAreaView>
-      </SafeAreaProvider>
-    </PaperProvider>
+    <>
+      <NavigationContainer>
+        <PaperProvider>
+          <NavigationStack />
+        </PaperProvider>
+      </NavigationContainer>
+    </>
   );
 }
 

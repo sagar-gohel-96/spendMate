@@ -36,7 +36,7 @@
 		</dict>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
@@ -51,5 +51,26 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>UIAppFonts</key>
+	<array>
+		<string>NoyhSlim-Black.ttf</string>
+		<string>NoyhSlim-BlackItalic.ttf</string>
+		<string>NoyhSlim-Bold.ttf</string>
+		<string>NoyhSlim-BoldItalic.ttf</string>
+		<string>NoyhSlim-ExtraLight.ttf</string>
+		<string>NoyhSlim-ExtraLightItalic.ttf</string>
+		<string>NoyhSlim-Heavy.ttf</string>
+		<string>NoyhSlim-HeavyItalic.ttf</string>
+		<string>NoyhSlim-Italic.ttf</string>
+		<string>NoyhSlim-Light.ttf</string>
+		<string>NoyhSlim-LightItalic.ttf</string>
+		<string>NoyhSlim-Medium.ttf</string>
+		<string>NoyhSlim-MediumItalic.ttf</string>
+		<string>NoyhSlim-Regular.ttf</string>
+		<string>NoyhSlim-SemiLight.ttf</string>
+		<string>NoyhSlim-SemiLightItalic.ttf</string>
+		<string>NoyhSlim-Thin.ttf</string>
+		<string>NoyhSlim-ThinItalic.ttf</string>
+	</array>
 </dict>
 </plist>

@@ -14,6 +14,24 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		7699B88040F8A987B510C191 /* libPods-AwesomeProject-AwesomeProjectTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-AwesomeProject-AwesomeProjectTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		4EB062C9AAFA42C7B8008E8C /* NoyhSlim-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 108344D0A445458FAECF29B4 /* NoyhSlim-Black.ttf */; };
+		3F8C7362F1A841F48E00B82F /* NoyhSlim-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 21A884243B654BA4ADC9ED51 /* NoyhSlim-BlackItalic.ttf */; };
+		0980CF37571C40E4A0B24134 /* NoyhSlim-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1580AD5E599446F2B1EC4041 /* NoyhSlim-Bold.ttf */; };
+		9028E1444AC4492CA2115D16 /* NoyhSlim-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 078D71EF301C4E8C850F1018 /* NoyhSlim-BoldItalic.ttf */; };
+		83EA85AD70A64F8F81AA7F08 /* NoyhSlim-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 92FFFE448E954187B818F583 /* NoyhSlim-ExtraLight.ttf */; };
+		EAE44DEB151F4FB18EFAA8B9 /* NoyhSlim-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 439B544DCD2F44DDA8E78B87 /* NoyhSlim-ExtraLightItalic.ttf */; };
+		6966532739A8415CB6B4CA63 /* NoyhSlim-Heavy.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 29E37842FD0B4FE382EDB67B /* NoyhSlim-Heavy.ttf */; };
+		E9FE070C24BE402F9586E0F3 /* NoyhSlim-HeavyItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DABC6DDE1555488E84D1F1A9 /* NoyhSlim-HeavyItalic.ttf */; };
+		18CDA92F56EC4918BFB669E8 /* NoyhSlim-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EE9495FFDBE948BC835C7D32 /* NoyhSlim-Italic.ttf */; };
+		D16EDEC0DBA04C9CB035BC07 /* NoyhSlim-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1EFBA8171D0C486DB4820340 /* NoyhSlim-Light.ttf */; };
+		8F55CF9872DA4C8B970981A9 /* NoyhSlim-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9D7724D0ECF040C684BF5C9D /* NoyhSlim-LightItalic.ttf */; };
+		B184C1A8D3F84803B0CB9128 /* NoyhSlim-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BAF5E683D8544DF5AEC00FF5 /* NoyhSlim-Medium.ttf */; };
+		EAF011F1B48142E6A8CCA34F /* NoyhSlim-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3CA02D930AB4413D98071209 /* NoyhSlim-MediumItalic.ttf */; };
+		8247054E1C2347B29C1DD3BF /* NoyhSlim-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4AF1597413D841CB9784CBC4 /* NoyhSlim-Regular.ttf */; };
+		393BBA0B478448EDBD8AF8A7 /* NoyhSlim-SemiLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C50209DD54644CBC87BC3DCC /* NoyhSlim-SemiLight.ttf */; };
+		684387CC3A664756AEBDC90C /* NoyhSlim-SemiLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7CB5488F5E4B4CCAADDC23D5 /* NoyhSlim-SemiLightItalic.ttf */; };
+		3E024A4F29D14594B4336C52 /* NoyhSlim-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2B4512A3262A450892A7C57C /* NoyhSlim-Thin.ttf */; };
+		E45564C29D8E4F5DAED5BE1B /* NoyhSlim-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 58755C721BDA4E01A9F2D6B7 /* NoyhSlim-ThinItalic.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +62,24 @@
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = AwesomeProject/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-AwesomeProject-AwesomeProjectTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AwesomeProject-AwesomeProjectTests.release.xcconfig"; path = "Target Support Files/Pods-AwesomeProject-AwesomeProjectTests/Pods-AwesomeProject-AwesomeProjectTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		108344D0A445458FAECF29B4 /* NoyhSlim-Black.ttf */ = {isa = PBXFileReference; name = "NoyhSlim-Black.ttf"; path = "../assets/fonts/NoyhSlim-Black.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		21A884243B654BA4ADC9ED51 /* NoyhSlim-BlackItalic.ttf */ = {isa = PBXFileReference; name = "NoyhSlim-BlackItalic.ttf"; path = "../assets/fonts/NoyhSlim-BlackItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		1580AD5E599446F2B1EC4041 /* NoyhSlim-Bold.ttf */ = {isa = PBXFileReference; name = "NoyhSlim-Bold.ttf"; path = "../assets/fonts/NoyhSlim-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		078D71EF301C4E8C850F1018 /* NoyhSlim-BoldItalic.ttf */ = {isa = PBXFileReference; name = "NoyhSlim-BoldItalic.ttf"; path = "../assets/fonts/NoyhSlim-BoldItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		92FFFE448E954187B818F583 /* NoyhSlim-ExtraLight.ttf */ = {isa = PBXFileReference; name = "NoyhSlim-ExtraLight.ttf"; path = "../assets/fonts/NoyhSlim-ExtraLight.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		439B544DCD2F44DDA8E78B87 /* NoyhSlim-ExtraLightItalic.ttf */ = {isa = PBXFileReference; name = "NoyhSlim-ExtraLightItalic.ttf"; path = "../assets/fonts/NoyhSlim-ExtraLightItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		29E37842FD0B4FE382EDB67B /* NoyhSlim-Heavy.ttf */ = {isa = PBXFileReference; name = "NoyhSlim-Heavy.ttf"; path = "../assets/fonts/NoyhSlim-Heavy.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		DABC6DDE1555488E84D1F1A9 /* NoyhSlim-HeavyItalic.ttf */ = {isa = PBXFileReference; name = "NoyhSlim-HeavyItalic.ttf"; path = "../assets/fonts/NoyhSlim-HeavyItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		EE9495FFDBE948BC835C7D32 /* NoyhSlim-Italic.ttf */ = {isa = PBXFileReference; name = "NoyhSlim-Italic.ttf"; path = "../assets/fonts/NoyhSlim-Italic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		1EFBA8171D0C486DB4820340 /* NoyhSlim-Light.ttf */ = {isa = PBXFileReference; name = "NoyhSlim-Light.ttf"; path = "../assets/fonts/NoyhSlim-Light.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		9D7724D0ECF040C684BF5C9D /* NoyhSlim-LightItalic.ttf */ = {isa = PBXFileReference; name = "NoyhSlim-LightItalic.ttf"; path = "../assets/fonts/NoyhSlim-LightItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		BAF5E683D8544DF5AEC00FF5 /* NoyhSlim-Medium.ttf */ = {isa = PBXFileReference; name = "NoyhSlim-Medium.ttf"; path = "../assets/fonts/NoyhSlim-Medium.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		3CA02D930AB4413D98071209 /* NoyhSlim-MediumItalic.ttf */ = {isa = PBXFileReference; name = "NoyhSlim-MediumItalic.ttf"; path = "../assets/fonts/NoyhSlim-MediumItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		4AF1597413D841CB9784CBC4 /* NoyhSlim-Regular.ttf */ = {isa = PBXFileReference; name = "NoyhSlim-Regular.ttf"; path = "../assets/fonts/NoyhSlim-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		C50209DD54644CBC87BC3DCC /* NoyhSlim-SemiLight.ttf */ = {isa = PBXFileReference; name = "NoyhSlim-SemiLight.ttf"; path = "../assets/fonts/NoyhSlim-SemiLight.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		7CB5488F5E4B4CCAADDC23D5 /* NoyhSlim-SemiLightItalic.ttf */ = {isa = PBXFileReference; name = "NoyhSlim-SemiLightItalic.ttf"; path = "../assets/fonts/NoyhSlim-SemiLightItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		2B4512A3262A450892A7C57C /* NoyhSlim-Thin.ttf */ = {isa = PBXFileReference; name = "NoyhSlim-Thin.ttf"; path = "../assets/fonts/NoyhSlim-Thin.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		58755C721BDA4E01A9F2D6B7 /* NoyhSlim-ThinItalic.ttf */ = {isa = PBXFileReference; name = "NoyhSlim-ThinItalic.ttf"; path = "../assets/fonts/NoyhSlim-ThinItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,6 +158,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				3AE8CE5DA91B4F46A51FA71A /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -147,6 +184,32 @@
 			);
 			path = Pods;
 			sourceTree = "<group>";
+		};
+		3AE8CE5DA91B4F46A51FA71A /* Resources */ = {
+			isa = "PBXGroup";
+			children = (
+				108344D0A445458FAECF29B4 /* NoyhSlim-Black.ttf */,
+				21A884243B654BA4ADC9ED51 /* NoyhSlim-BlackItalic.ttf */,
+				1580AD5E599446F2B1EC4041 /* NoyhSlim-Bold.ttf */,
+				078D71EF301C4E8C850F1018 /* NoyhSlim-BoldItalic.ttf */,
+				92FFFE448E954187B818F583 /* NoyhSlim-ExtraLight.ttf */,
+				439B544DCD2F44DDA8E78B87 /* NoyhSlim-ExtraLightItalic.ttf */,
+				29E37842FD0B4FE382EDB67B /* NoyhSlim-Heavy.ttf */,
+				DABC6DDE1555488E84D1F1A9 /* NoyhSlim-HeavyItalic.ttf */,
+				EE9495FFDBE948BC835C7D32 /* NoyhSlim-Italic.ttf */,
+				1EFBA8171D0C486DB4820340 /* NoyhSlim-Light.ttf */,
+				9D7724D0ECF040C684BF5C9D /* NoyhSlim-LightItalic.ttf */,
+				BAF5E683D8544DF5AEC00FF5 /* NoyhSlim-Medium.ttf */,
+				3CA02D930AB4413D98071209 /* NoyhSlim-MediumItalic.ttf */,
+				4AF1597413D841CB9784CBC4 /* NoyhSlim-Regular.ttf */,
+				C50209DD54644CBC87BC3DCC /* NoyhSlim-SemiLight.ttf */,
+				7CB5488F5E4B4CCAADDC23D5 /* NoyhSlim-SemiLightItalic.ttf */,
+				2B4512A3262A450892A7C57C /* NoyhSlim-Thin.ttf */,
+				58755C721BDA4E01A9F2D6B7 /* NoyhSlim-ThinItalic.ttf */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+			path = "";
 		};
 /* End PBXGroup section */
 
@@ -244,6 +307,24 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				4EB062C9AAFA42C7B8008E8C /* NoyhSlim-Black.ttf in Resources */,
+				3F8C7362F1A841F48E00B82F /* NoyhSlim-BlackItalic.ttf in Resources */,
+				0980CF37571C40E4A0B24134 /* NoyhSlim-Bold.ttf in Resources */,
+				9028E1444AC4492CA2115D16 /* NoyhSlim-BoldItalic.ttf in Resources */,
+				83EA85AD70A64F8F81AA7F08 /* NoyhSlim-ExtraLight.ttf in Resources */,
+				EAE44DEB151F4FB18EFAA8B9 /* NoyhSlim-ExtraLightItalic.ttf in Resources */,
+				6966532739A8415CB6B4CA63 /* NoyhSlim-Heavy.ttf in Resources */,
+				E9FE070C24BE402F9586E0F3 /* NoyhSlim-HeavyItalic.ttf in Resources */,
+				18CDA92F56EC4918BFB669E8 /* NoyhSlim-Italic.ttf in Resources */,
+				D16EDEC0DBA04C9CB035BC07 /* NoyhSlim-Light.ttf in Resources */,
+				8F55CF9872DA4C8B970981A9 /* NoyhSlim-LightItalic.ttf in Resources */,
+				B184C1A8D3F84803B0CB9128 /* NoyhSlim-Medium.ttf in Resources */,
+				EAF011F1B48142E6A8CCA34F /* NoyhSlim-MediumItalic.ttf in Resources */,
+				8247054E1C2347B29C1DD3BF /* NoyhSlim-Regular.ttf in Resources */,
+				393BBA0B478448EDBD8AF8A7 /* NoyhSlim-SemiLight.ttf in Resources */,
+				684387CC3A664756AEBDC90C /* NoyhSlim-SemiLightItalic.ttf in Resources */,
+				3E024A4F29D14594B4336C52 /* NoyhSlim-Thin.ttf in Resources */,
+				E45564C29D8E4F5DAED5BE1B /* NoyhSlim-ThinItalic.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

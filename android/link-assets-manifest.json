@@ -1,0 +1,77 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/fonts/NoyhSlim-Black.ttf",
+      "sha1": "3e7a625584c072a1d79ad06d89b1c42d8f38e80f"
+    },
+    {
+      "path": "assets/fonts/NoyhSlim-BlackItalic.ttf",
+      "sha1": "de7f8a3c7abe1708b64791e5ee0004c0662a3eee"
+    },
+    {
+      "path": "assets/fonts/NoyhSlim-Bold.ttf",
+      "sha1": "eca096d5537b77ff428ea6e1c5f8948c34f4cca9"
+    },
+    {
+      "path": "assets/fonts/NoyhSlim-BoldItalic.ttf",
+      "sha1": "c061d72e2c50f92ab7d7b0146d4287f539d433e5"
+    },
+    {
+      "path": "assets/fonts/NoyhSlim-ExtraLight.ttf",
+      "sha1": "4dc4fdb04a16b4040d5c8ea622199de4b0b4f249"
+    },
+    {
+      "path": "assets/fonts/NoyhSlim-ExtraLightItalic.ttf",
+      "sha1": "79f16636c7b7139f691baa7ac260c2ccac8b0c44"
+    },
+    {
+      "path": "assets/fonts/NoyhSlim-Heavy.ttf",
+      "sha1": "60d5c7fb2df85cb0b5c3054e9b48cd642489e41c"
+    },
+    {
+      "path": "assets/fonts/NoyhSlim-HeavyItalic.ttf",
+      "sha1": "ad685cb9d0211cfd2cc7e9262f590a1d926b4b7e"
+    },
+    {
+      "path": "assets/fonts/NoyhSlim-Italic.ttf",
+      "sha1": "df50d3a0dbb657c555bb8bfa514ced26b2ca3e0a"
+    },
+    {
+      "path": "assets/fonts/NoyhSlim-Light.ttf",
+      "sha1": "f19e09854b376650e5d43bae3000e2ba37c0cfc2"
+    },
+    {
+      "path": "assets/fonts/NoyhSlim-LightItalic.ttf",
+      "sha1": "12a9f6af17a45a39fb1744a480a0d1d40d0f5ef5"
+    },
+    {
+      "path": "assets/fonts/NoyhSlim-Medium.ttf",
+      "sha1": "53de8a71bdb8ce2ed92c3918a2f225431222e9ac"
+    },
+    {
+      "path": "assets/fonts/NoyhSlim-MediumItalic.ttf",
+      "sha1": "5968a7e45180555114ae8dac1f75346668898966"
+    },
+    {
+      "path": "assets/fonts/NoyhSlim-Regular.ttf",
+      "sha1": "06c12b80f4a243fdf15fdca78a473b6c57fd3b8f"
+    },
+    {
+      "path": "assets/fonts/NoyhSlim-SemiLight.ttf",
+      "sha1": "1fadd93c45947b6ac08f82a851c86ce418b92ff4"
+    },
+    {
+      "path": "assets/fonts/NoyhSlim-SemiLightItalic.ttf",
+      "sha1": "8d94e4854af630682eae3244048825bf9d4f1345"
+    },
+    {
+      "path": "assets/fonts/NoyhSlim-Thin.ttf",
+      "sha1": "6740063b2238ee7c15fc8e27d8af2133766286d2"
+    },
+    {
+      "path": "assets/fonts/NoyhSlim-ThinItalic.ttf",
+      "sha1": "15fd0c3805711bf30037970eee9dbcfc594bce2f"
+    }
+  ]
+}

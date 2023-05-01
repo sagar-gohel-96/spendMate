@@ -17,4 +17,13 @@ export const fonts = {
   NoyhSlimSemiLightItalic: 'NoyhSlim-SemiLightItalic',
   NoyhSlimThin: 'NoyhSlim-Thin',
   NoyhSlimThinItalic: 'NoyhSlim-ThinItalic',
+  CarosSoft: 'CarosSoft',
+  CarosSoftBlack: 'CarosSoftBlack',
+  CarosSoftBold: 'CarosSoftBold',
+  CarosSoftExtraBold: 'CarosSoftExtraBold',
+  CarosSoftExtraLight: 'CarosSoftExtraLight',
+  CarosSoftHeavy: 'CarosSoftHeavy',
+  CarosSoftLight: 'CarosSoftLight',
+  CarosSoftMedium: 'CarosSoftMedium',
+  CarosSoftThin: 'CarosSoftThin',
 };

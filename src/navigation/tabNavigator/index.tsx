@@ -6,6 +6,8 @@ import {theme} from '../../utils/theme';
 import ProfileScreen from '../../screens/Profile';
 import {Text} from 'react-native';
 import AnalyticsScreen from '../../screens/Analytics';
+import {StyleSheet} from 'react-native';
+import {fonts} from '../../utils/fonts';
 
 const Tab = createBottomTabNavigator();
 
@@ -30,13 +32,21 @@ const AnalyticsIcon = (focused: boolean) => (
     color={focused ? theme.colors.button : theme.colors.primary}
   />
 );
-const Lable = (focused: boolean, value: string) => <Text>{value}</Text>;
+const Lable = (focused: boolean, value: string) => (
+  <Text style={[focused && tabTextStyle.focused, tabTextStyle.label]}>
+    {value}
+  </Text>
+);
 const MainScreen = () => {
   return (
     <Tab.Navigator
       initialRouteName="LandingScreen"
       screenOptions={{
         headerShown: false,
+        tabBarStyle: {
+          height: 50,
+          paddingBottom: 5,
+        },
       }}>
       <Tab.Screen
         name="Home"
@@ -67,3 +77,12 @@ const MainScreen = () => {
 };
 
 export default MainScreen;
+const tabTextStyle = StyleSheet.create({
+  label: {
+    fontFamily: fonts.CarosSoftMedium,
+    fontSize: 12,
+  },
+  focused: {
+    color: theme.colors.button,
+  },
+});

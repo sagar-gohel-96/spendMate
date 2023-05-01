@@ -10,6 +10,13 @@ export const theme = {
     darkBlue: '#6574d3',
     cream: '#ebc68f',
     white: '#ffffff',
+    success: '#7ddf64',
+    error: '#e5383b',
+    PENDING: '#ffc857',
+    sky: '#c0d6df',
+    BUTTON: '#4f6d7a',
+    navbar: '#e1eff6',
+    TEXT: '#5e4f73',
   },
   icon: {
     100: '#fae6e7',

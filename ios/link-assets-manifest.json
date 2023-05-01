@@ -2,6 +2,42 @@
   "migIndex": 1,
   "data": [
     {
+      "path": "assets/fonts/CarosSoft.otf",
+      "sha1": "dd969b03a8578f3eb9ba8030aaab7cb9894258a3"
+    },
+    {
+      "path": "assets/fonts/CarosSoftBlack.otf",
+      "sha1": "c71eba524ffc1cc20d748286c4571b832aa4b580"
+    },
+    {
+      "path": "assets/fonts/CarosSoftBold.otf",
+      "sha1": "22ba9621b7845fa490a974efd998dd713f8bb1e8"
+    },
+    {
+      "path": "assets/fonts/CarosSoftExtraBold.otf",
+      "sha1": "45472d830c8c81f9f23da24ec19f411552a9143d"
+    },
+    {
+      "path": "assets/fonts/CarosSoftExtraLight.otf",
+      "sha1": "df730b06b7cf116aaa07e1c8fcdf5d24412f242b"
+    },
+    {
+      "path": "assets/fonts/CarosSoftHeavy.otf",
+      "sha1": "ba15a9a1b05ff6556e251221e4a0a2ef927a9cf4"
+    },
+    {
+      "path": "assets/fonts/CarosSoftLight.otf",
+      "sha1": "0028f15485758ff24dcd82e8cf2c17e4f7f4fecf"
+    },
+    {
+      "path": "assets/fonts/CarosSoftMedium.otf",
+      "sha1": "6a28ac2772f8a3b1f94f09ffd814562ffb067ebf"
+    },
+    {
+      "path": "assets/fonts/CarosSoftThin.otf",
+      "sha1": "2a4805ce83868aea5820ed5b61d468e615465314"
+    },
+    {
       "path": "assets/fonts/NoyhSlim-Black.ttf",
       "sha1": "3e7a625584c072a1d79ad06d89b1c42d8f38e80f"
     },

@@ -7,4 +7,5 @@ export enum IconList {
   Health = 'bottle-tonic-plus',
   Education = 'school',
   GiftsDonation = 'gift',
+  Search = 'magnify',
 }

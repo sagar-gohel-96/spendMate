@@ -106,7 +106,7 @@ const landingScreenStyle = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 100,
-    backgroundColor: theme.colors.PENDING,
+    backgroundColor: theme.colors.pending,
     marginHorizontal: 2,
   },
   dotContainer: {

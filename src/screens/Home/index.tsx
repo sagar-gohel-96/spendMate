@@ -1,10 +1,11 @@
 import React from 'react';
-import {Dimensions, StyleSheet, Text, View} from 'react-native';
+import {Dimensions, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {Avatar} from 'react-native-paper';
 import Logo from '../../components/logo';
 import {HomeBanner, Icon} from '../../modules/core';
 import {theme} from '../../utils/theme';
 import TransactionCard from '../../components/card';
+import {IconList} from '../../../assets/Icon/icon';
 
 const HomeScreen = () => {
   const {
@@ -18,23 +19,25 @@ const HomeScreen = () => {
   } = homeScreenStyle;
 
   return (
-    <View style={rootContainer}>
-      <View style={searchContainer}>
-        <Logo />
-        <Icon name="magnify" />
-      </View>
-      <View style={header}>
-        <View style={sectionOne}>
-          <Avatar.Text size={40} label="SG" />
-          <View style={headerContainer}>
-            <Text style={primaryText}>Morning</Text>
-            <Text style={secondaryText}>Jef oliver</Text>
+    <ScrollView>
+      <View style={rootContainer}>
+        <View style={searchContainer}>
+          <Logo />
+          <Icon name={IconList.Search} />
+        </View>
+        <View style={header}>
+          <View style={sectionOne}>
+            <Avatar.Text size={40} label="SG" />
+            <View style={headerContainer}>
+              <Text style={primaryText}>Morning</Text>
+              <Text style={secondaryText}>Jef oliver</Text>
+            </View>
           </View>
         </View>
+        <HomeBanner />
+        <TransactionCard />
       </View>
-      <HomeBanner />
-      <TransactionCard />
-    </View>
+    </ScrollView>
   );
 };
 

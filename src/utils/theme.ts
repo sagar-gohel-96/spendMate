@@ -7,7 +7,6 @@ export const theme = {
     gray: '#adb5bd',
     color: '#e78bbc',
     blue: '#e6e9f8',
-    darkBlue: '#6574d3',
     cream: '#ebc68f',
     white: '#ffffff',
     success: '#7ddf64',
@@ -16,7 +15,9 @@ export const theme = {
     sky: '#c0d6df',
     BUTTON: '#4f6d7a',
     navbar: '#e1eff6',
-    TEXT: '#5e4f73',
+    text1: '#5e4f73',
+    banner: '#6574d3',
+    border: '#eaf1fb',
   },
   icon: {
     100: '#fae6e7',

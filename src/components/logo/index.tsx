@@ -22,10 +22,10 @@ const logoStyle = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  image: {height: 38, width: 38},
+  image: {height: 30, width: 30},
   logotext: {
     fontFamily: fonts.CarosSoftBold,
     fontSize: 19,
-    color: theme.text.secondary,
+    color: theme.text.header,
   },
 });

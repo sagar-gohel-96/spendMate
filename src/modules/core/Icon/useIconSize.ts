@@ -1,12 +1,12 @@
 export const useIconSize = (size: IconSize) => {
   if (size === 'sm') {
-    return 22;
+    return 28;
   }
   if (size === 'lg') {
-    return 32;
+    return 36;
   }
   if (size === 'md') {
-    return 28;
+    return 32;
   }
 };
 

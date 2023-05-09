@@ -8,6 +8,8 @@ import {Text} from 'react-native';
 import AnalyticsScreen from '../../screens/Analytics';
 import {StyleSheet} from 'react-native';
 import {fonts} from '../../utils/fonts';
+import NotificationScreen from '../../screens/Notification';
+import TransactionScreen from '../../screens/Transaction';
 
 const Tab = createBottomTabNavigator();
 
@@ -15,21 +17,36 @@ const HomeIcon = (focused: boolean) => (
   <Icon
     name="home"
     size={30}
-    color={focused ? theme.colors.button : theme.colors.primary}
+    color={focused ? theme.text.header : theme.colors.primary}
   />
 );
 const ProfileIcon = (focused: boolean) => (
   <Icon
     name="account"
     size={30}
-    color={focused ? theme.colors.button : theme.colors.primary}
+    color={focused ? theme.text.header : theme.colors.primary}
   />
 );
 const AnalyticsIcon = (focused: boolean) => (
   <Icon
     name="poll"
     size={30}
-    color={focused ? theme.colors.button : theme.colors.primary}
+    color={focused ? theme.text.header : theme.colors.primary}
+  />
+);
+const NotificationIcon = (focused: boolean) => (
+  <Icon
+    name="bell"
+    size={30}
+    color={focused ? theme.text.header : theme.colors.primary}
+  />
+);
+const TransactionIcon = () => (
+  <Icon
+    name="plus"
+    size={40}
+    style={tabTextStyle.addTransaction}
+    color={theme.colors.white}
   />
 );
 const Lable = (focused: boolean, value: string) => (
@@ -44,8 +61,7 @@ const MainScreen = () => {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          height: 50,
-          paddingBottom: 5,
+          paddingBottom: 4,
         },
       }}>
       <Tab.Screen
@@ -65,6 +81,22 @@ const MainScreen = () => {
         }}
       />
       <Tab.Screen
+        name="Transaction"
+        component={TransactionScreen}
+        options={{
+          tabBarIcon: () => TransactionIcon(),
+          tabBarLabel: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="Notification"
+        component={NotificationScreen}
+        options={{
+          tabBarIcon: ({focused}) => NotificationIcon(focused),
+          tabBarLabel: focused => Lable(focused.focused, 'Notification'),
+        }}
+      />
+      <Tab.Screen
         name="Analytics"
         component={AnalyticsScreen}
         options={{
@@ -79,10 +111,11 @@ const MainScreen = () => {
 export default MainScreen;
 const tabTextStyle = StyleSheet.create({
   label: {
-    fontFamily: fonts.CarosSoftMedium,
+    fontFamily: fonts.CarosSoftBold,
     fontSize: 12,
   },
   focused: {
-    color: theme.colors.button,
+    color: theme.text.header,
   },
+  addTransaction: {backgroundColor: theme.colors.pink, borderRadius: 8},
 });

@@ -128,7 +128,7 @@ const landingScreenStyle = StyleSheet.create({
     right: 10,
   },
   nextButton: {
-    backgroundColor: theme.colors.color,
+    backgroundColor: theme.colors.pink,
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',

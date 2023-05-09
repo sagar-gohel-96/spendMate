@@ -1,5 +1,5 @@
 import React from 'react';
-import {Dimensions, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {Avatar} from 'react-native-paper';
 import Logo from '../../components/logo';
 import {HomeBanner, Icon} from '../../modules/core';
@@ -23,7 +23,7 @@ const HomeScreen = () => {
       <View style={rootContainer}>
         <View style={searchContainer}>
           <Logo />
-          <Icon name={IconList.Search} />
+          <Icon name={IconList.Search} size="lg" />
         </View>
         <View style={header}>
           <View style={sectionOne}>
@@ -45,18 +45,18 @@ export default HomeScreen;
 
 const homeScreenStyle = StyleSheet.create({
   rootContainer: {
-    padding: 15,
+    padding: 12,
+    paddingTop: 4,
     backgroundColor: theme.colors.white,
-    height: Dimensions.get('screen').height,
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginVertical: 10,
+    marginVertical: 8,
   },
   headerContainer: {
-    marginLeft: 10,
+    marginLeft: 8,
   },
   primaryText: {fontWeight: '500', fontSize: 14},
   secondaryText: {fontWeight: 'bold', color: theme.colors.text1, fontSize: 16},

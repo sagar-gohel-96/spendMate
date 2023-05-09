@@ -6,12 +6,12 @@ export const getIconStyle = (
 ): {backgroundColor: string; color: string} => {
   if (name === IconList.Clothing) {
     return {
-      backgroundColor: theme.colors.primary,
-      color: theme.colors.secondary,
+      backgroundColor: '#dee2e6',
+      color: '#495057',
     };
   }
   if (name === IconList.Education) {
-    return {backgroundColor: theme.colors.button, color: theme.colors.pending};
+    return {backgroundColor: '#a9d6e5', color: '#01497c'};
   }
   if (name === IconList.Entertainment) {
     return {backgroundColor: theme.colors.btn, color: theme.colors.navbar};
@@ -20,16 +20,16 @@ export const getIconStyle = (
     return {backgroundColor: theme.icon[100], color: theme.icon[200]};
   }
   if (name === IconList.GiftsDonation) {
-    return {backgroundColor: theme.colors.color, color: theme.colors.primary};
+    return {backgroundColor: theme.colors.pink, color: theme.colors.white};
   }
   if (name === IconList.Health) {
-    return {backgroundColor: 'red', color: 'yellow'};
+    return {backgroundColor: '#edf2fb', color: '#abc4ff'};
   }
   if (name === IconList.Housing) {
-    return {backgroundColor: 'red', color: 'yellow'};
+    return {backgroundColor: '#dac3e8', color: '#6247aa'};
   }
   if (name === IconList.Transportation) {
-    return {backgroundColor: 'red', color: 'yellow'};
+    return {backgroundColor: '#d0efb1', color: '#415d43'};
   }
   return {backgroundColor: 'black', color: 'gray'};
 };

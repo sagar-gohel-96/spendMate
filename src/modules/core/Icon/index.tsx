@@ -3,10 +3,9 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {IconSize, useIconSize} from './useIconSize';
 import {useSize} from './useSize';
-import {IconList} from '../../../../assets/Icon/icon';
 
 interface IconProps {
-  name: IconList;
+  name: any;
   size?: IconSize;
   color?: string;
   backgroundColor?: string;

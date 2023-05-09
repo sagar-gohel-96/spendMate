@@ -1,11 +1,11 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Text} from 'react-native';
 import {View} from 'react-native';
 import {TextInput} from 'react-native-paper';
 import {RadioButton} from 'react-native-paper';
 
 const TransactionForm = () => {
-  const [checked, setChecked] = React.useState('first');
+  const [checked, setChecked] = useState('first');
   return (
     <View>
       <TextInput label="description" mode="outlined" />
@@ -21,6 +21,7 @@ const TransactionForm = () => {
           status={checked === 'second' ? 'checked' : 'unchecked'}
           onPress={() => setChecked('second')}
         />
+        <Text>hello</Text>
       </View>
     </View>
   );

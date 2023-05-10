@@ -59,7 +59,11 @@ const homeScreenStyle = StyleSheet.create({
     marginLeft: 8,
   },
   primaryText: {fontWeight: '500', fontSize: 14},
-  secondaryText: {fontWeight: 'bold', color: theme.colors.text1, fontSize: 16},
+  secondaryText: {
+    fontWeight: 'bold',
+    color: theme.colors.exeeria,
+    fontSize: 16,
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',

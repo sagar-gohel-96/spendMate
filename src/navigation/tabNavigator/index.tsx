@@ -17,28 +17,28 @@ const HomeIcon = (focused: boolean) => (
   <Icon
     name="home"
     size={30}
-    color={focused ? theme.text.header : theme.colors.primary}
+    color={focused ? theme.text.exeeria : theme.colors.primary}
   />
 );
 const ProfileIcon = (focused: boolean) => (
   <Icon
     name="account"
     size={30}
-    color={focused ? theme.text.header : theme.colors.primary}
+    color={focused ? theme.text.exeeria : theme.colors.primary}
   />
 );
 const AnalyticsIcon = (focused: boolean) => (
   <Icon
     name="poll"
     size={30}
-    color={focused ? theme.text.header : theme.colors.primary}
+    color={focused ? theme.text.exeeria : theme.colors.primary}
   />
 );
 const NotificationIcon = (focused: boolean) => (
   <Icon
     name="bell"
     size={30}
-    color={focused ? theme.text.header : theme.colors.primary}
+    color={focused ? theme.text.exeeria : theme.colors.primary}
   />
 );
 const TransactionIcon = () => (
@@ -73,11 +73,11 @@ const MainScreen = () => {
         }}
       />
       <Tab.Screen
-        name="Profile"
-        component={ProfileScreen}
+        name="Analytics"
+        component={AnalyticsScreen}
         options={{
-          tabBarIcon: ({focused}) => ProfileIcon(focused),
-          tabBarLabel: focused => Lable(focused.focused, 'Profile'),
+          tabBarIcon: ({focused}) => AnalyticsIcon(focused),
+          tabBarLabel: focused => Lable(focused.focused, 'Analytics'),
         }}
       />
       <Tab.Screen
@@ -97,11 +97,11 @@ const MainScreen = () => {
         }}
       />
       <Tab.Screen
-        name="Analytics"
-        component={AnalyticsScreen}
+        name="Profile"
+        component={ProfileScreen}
         options={{
-          tabBarIcon: ({focused}) => AnalyticsIcon(focused),
-          tabBarLabel: focused => Lable(focused.focused, 'Analytics'),
+          tabBarIcon: ({focused}) => ProfileIcon(focused),
+          tabBarLabel: focused => Lable(focused.focused, 'Profile'),
         }}
       />
     </Tab.Navigator>
@@ -115,7 +115,7 @@ const tabTextStyle = StyleSheet.create({
     fontSize: 12,
   },
   focused: {
-    color: theme.text.header,
+    color: theme.text.exeeria,
   },
-  addTransaction: {backgroundColor: theme.colors.pink, borderRadius: 8},
+  addTransaction: {backgroundColor: theme.text.exeeria, borderRadius: 8},
 });

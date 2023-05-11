@@ -11,19 +11,26 @@ import {Button, RadioButton} from 'react-native-paper';
 import {fonts} from '../../utils/fonts';
 import {theme} from '../../utils/theme';
 import {Icon} from '../../modules/core';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import {categories} from '../../utils/categories';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 const TransactionForm = () => {
   const [checked, setChecked] = useState('first');
   const [categoryVisible, setcategoryVisible] = useState<boolean>(false);
-  const [date, setDate] = useState(new Date(1598051730000));
-  const [show, setShow] = useState(false);
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const category: string[] = [];
 
-  const onChange = (event: Event, selectedDate: Date) => {
-    const currentDate = selectedDate;
-    setShow(false);
-    setDate(currentDate);
-    console.log(currentDate, show);
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+  const handleConfirm = (date: Date) => {
+    console.log(date);
+    hideDatePicker();
   };
 
   return (
@@ -69,7 +76,15 @@ const TransactionForm = () => {
         />
         {categoryVisible && (
           <View style={formStyle.categoryContainer}>
-            <Text>hello</Text>
+            {categories.map(i => (
+              <Text
+                onPress={() => {
+                  category.push(i.name);
+                  setcategoryVisible(false);
+                }}>
+                {i.name}
+              </Text>
+            ))}
           </View>
         )}
         <View style={formStyle.headerContainer}>
@@ -83,19 +98,15 @@ const TransactionForm = () => {
         <TextInput
           placeholder="DD/MM/YYYY"
           style={formStyle.input}
-          onFocus={() => setShow(true)}
           showSoftInputOnFocus={false}
+          onFocus={showDatePicker}
         />
-        {show && (
-          <DateTimePicker
-            testID="dateTimePicker"
-            value={date}
-            mode="date"
-            is24Hour={true}
-            onChange={() => onChange}
-          />
-        )}
-
+        <DateTimePickerModal
+          isVisible={isDatePickerVisible}
+          mode="date"
+          onConfirm={handleConfirm}
+          onCancel={hideDatePicker}
+        />
         <View style={formStyle.headerContainer}>
           <Icon name="shape" color={theme.text.exeeria} size="sm" />
           <Text style={formStyle.header}>Description</Text>
@@ -103,11 +114,11 @@ const TransactionForm = () => {
         <TextInput
           placeholder="Description"
           style={formStyle.input}
-          onFocus={() => setcategoryVisible(true)}
           multiline
           numberOfLines={4}
-          textAlign="left"
+          textAlignVertical="top"
         />
+
         <Button style={formStyle.button} textColor="white">
           Save
         </Button>
@@ -159,6 +170,7 @@ const formStyle = StyleSheet.create({
   },
   categoryContainer: {
     position: 'absolute',
+    width: Dimensions.get('screen').width - 20,
     borderWidth: 1,
   },
   typeRadio: {

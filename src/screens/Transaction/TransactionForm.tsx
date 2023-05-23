@@ -1,11 +1,5 @@
-import React, {useState} from 'react';
-import {
-  Dimensions,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {ScrollView, StyleSheet, Text, TextInput} from 'react-native';
 import {View} from 'react-native';
 import {Button, RadioButton} from 'react-native-paper';
 import {fonts} from '../../utils/fonts';
@@ -13,12 +7,47 @@ import {theme} from '../../utils/theme';
 import {Icon} from '../../modules/core';
 import {categories} from '../../utils/categories';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import {useFormik} from 'formik';
+import {Modalize, useModalize} from 'react-native-modalize';
+import {useKeyboard} from '@react-native-community/hooks';
+import {useTransaction} from '../../../entity/hook/useTransaction';
+import {transactionValidationSchema} from '../../../validationShema';
 
 const TransactionForm = () => {
-  const [checked, setChecked] = useState('first');
-  const [categoryVisible, setcategoryVisible] = useState<boolean>(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const category: string[] = [];
+  const {mutateCreateTransaction} = useTransaction();
+
+  const {ref, open} = useModalize();
+  const keyboard = useKeyboard();
+
+  const scrollViewRef = useRef<ScrollView | null>(null);
+
+  useEffect(() => {
+    if (keyboard.keyboardShown) {
+      scrollViewRef.current?.scrollTo({y: 230, animated: true});
+    }
+  }, [keyboard, keyboard.keyboardShown]);
+
+  enum TransactionType {
+    Income = 'income',
+    Expense = 'expense',
+  }
+
+  const {values, handleChange, handleSubmit, setFieldValue, errors, touched} =
+    useFormik({
+      initialValues: {
+        category: categories[0],
+        date: new Date(),
+        description: '',
+        type: TransactionType.Expense,
+        amount: 0,
+      },
+      validationSchema: transactionValidationSchema,
+      onSubmit: (value, {resetForm}) => {
+        mutateCreateTransaction(value);
+        resetForm({});
+      },
+    });
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -29,12 +58,12 @@ const TransactionForm = () => {
   };
 
   const handleConfirm = (date: Date) => {
-    console.log(date);
+    setFieldValue('date', date);
     hideDatePicker();
   };
 
   return (
-    <ScrollView>
+    <ScrollView ref={scrollViewRef}>
       <View style={formStyle.root}>
         <View style={formStyle.headerContainer}>
           <Icon
@@ -45,25 +74,28 @@ const TransactionForm = () => {
           <Text style={formStyle.header}>Type</Text>
         </View>
         <View style={formStyle.transactionType}>
-          <View style={formStyle.typeRadio}>
-            <RadioButton
-              value="income"
-              status={checked === 'income' ? 'checked' : 'unchecked'}
-              onPress={() => setChecked('income')}
-              color={theme.text.exeeria}
-            />
-            <Text style={formStyle.text}>income</Text>
-          </View>
-          <View style={formStyle.typeRadio}>
-            <RadioButton
-              value="expense"
-              status={checked === 'expense' ? 'checked' : 'unchecked'}
-              onPress={() => setChecked('expense')}
-              color={theme.text.exeeria}
-            />
-            <Text style={formStyle.text}>expense</Text>
-          </View>
+          <RadioButton.Group
+            onValueChange={handleChange('type')}
+            value={values.type}>
+            <View style={formStyle.typeRadio}>
+              <RadioButton
+                value={TransactionType.Expense}
+                color={theme.text.exeeria}
+              />
+              <Text style={formStyle.text}>expense</Text>
+            </View>
+            <View style={formStyle.typeRadio}>
+              <RadioButton
+                value={TransactionType.Income}
+                color={theme.text.exeeria}
+              />
+              <Text style={formStyle.text}>income</Text>
+            </View>
+          </RadioButton.Group>
         </View>
+        {touched.type && errors.type && (
+          <Text style={formStyle.errorText}>{errors.type}</Text>
+        )}
         <View style={formStyle.headerContainer}>
           <Icon name="shape" color={theme.text.exeeria} size="sm" />
           <Text style={formStyle.header}>Category</Text>
@@ -71,22 +103,11 @@ const TransactionForm = () => {
         <TextInput
           placeholder="Category"
           style={formStyle.input}
-          onFocus={() => setcategoryVisible(true)}
+          onFocus={() => open()}
+          value={values.category}
           showSoftInputOnFocus={false}
+          onPressOut={() => open()}
         />
-        {categoryVisible && (
-          <View style={formStyle.categoryContainer}>
-            {categories.map(i => (
-              <Text
-                onPress={() => {
-                  category.push(i.name);
-                  setcategoryVisible(false);
-                }}>
-                {i.name}
-              </Text>
-            ))}
-          </View>
-        )}
         <View style={formStyle.headerContainer}>
           <Icon
             name="clipboard-text-clock-outline"
@@ -100,6 +121,7 @@ const TransactionForm = () => {
           style={formStyle.input}
           showSoftInputOnFocus={false}
           onFocus={showDatePicker}
+          value={values.date.toDateString()}
         />
         <DateTimePickerModal
           isVisible={isDatePickerVisible}
@@ -107,6 +129,12 @@ const TransactionForm = () => {
           onConfirm={handleConfirm}
           onCancel={hideDatePicker}
         />
+        {touched.date && errors.date && (
+          <Text style={formStyle.errorText}>
+            {errors.date as React.ReactNode}
+          </Text>
+        )}
+
         <View style={formStyle.headerContainer}>
           <Icon name="shape" color={theme.text.exeeria} size="sm" />
           <Text style={formStyle.header}>Description</Text>
@@ -117,19 +145,59 @@ const TransactionForm = () => {
           multiline
           numberOfLines={4}
           textAlignVertical="top"
+          value={values.description}
+          onChangeText={handleChange('description')}
         />
+        <View style={formStyle.headerContainer}>
+          <Icon name="currency-rupee" color={theme.text.exeeria} size="sm" />
+          <Text style={formStyle.header}>Amount</Text>
+          <TextInput
+            value={values.amount?.toString()}
+            keyboardType="numeric"
+            onChange={handleChange('amount')}
+            style={[
+              formStyle.input,
+              {
+                textAlign: 'center',
+                flex: 1,
+                marginLeft: 20,
+              },
+            ]}
+          />
+        </View>
+        {touched.amount && errors.amount && (
+          <Text style={formStyle.errorText}>{errors.amount}</Text>
+        )}
 
-        <Button style={formStyle.button} textColor="white">
+        <Button
+          style={formStyle.button}
+          textColor="white"
+          onPress={handleSubmit}>
           Save
         </Button>
       </View>
+      <Modalize adjustToContentHeight ref={ref}>
+        <View style={formStyle.categoryContainer}>
+          <RadioButton.Group
+            onValueChange={handleChange('category')}
+            value={values.category}>
+            {categories.map(i => (
+              <View style={formStyle.div}>
+                <RadioButton value={i} color={theme.text.exeeria} />
+                <Text style={formStyle.text}>{i}</Text>
+              </View>
+            ))}
+          </RadioButton.Group>
+        </View>
+      </Modalize>
+      {keyboard.keyboardShown && <View style={{height: 1200}} />}
     </ScrollView>
   );
 };
 export default TransactionForm;
 
 const formStyle = StyleSheet.create({
-  root: {height: Dimensions.get('screen').height, padding: 12},
+  root: {padding: 18},
   banner: {
     fontFamily: fonts.CarosSoftBold,
     fontSize: 24,
@@ -169,17 +237,19 @@ const formStyle = StyleSheet.create({
     fontSize: 16,
   },
   categoryContainer: {
-    position: 'absolute',
-    width: Dimensions.get('screen').width - 20,
-    borderWidth: 1,
+    padding: 20,
   },
   typeRadio: {
     flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
   },
   button: {
     backgroundColor: theme.text.exeeria,
     marginTop: 8,
   },
+  div: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  errorText: {color: 'red', fontFamily: fonts.CarosSoftMedium},
 });

@@ -30,7 +30,6 @@ const formStyle = StyleSheet.create({
     justifyContent: 'center',
   },
   container: {
-    padding: 10,
     backgroundColor: theme.colors.white,
     height: Dimensions.get('screen').height,
   },

@@ -5,7 +5,7 @@ import {IconSize, useIconSize} from './useIconSize';
 import {useSize} from './useSize';
 
 interface IconProps {
-  name: any;
+  name: string;
   size?: IconSize;
   color?: string;
   backgroundColor?: string;

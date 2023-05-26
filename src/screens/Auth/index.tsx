@@ -9,13 +9,12 @@ export enum screenType {
 
 const AuthScreen = () => {
   const [screen, setScreen] = useState<screenType>(screenType.LOGIN);
-  console.log(screen);
 
   return (
     <View style={{flex: 1}}>
       {screen === screenType.SIGNUP ? (
         <AuthForm
-          initialValues={{email: '', name: '', password: ''}}
+          initialValues={{email: '', password: ''}}
           buttonText="Save"
           screenName="SignUp"
           bottomText="Already Have An Account? Log IN"
@@ -23,7 +22,7 @@ const AuthScreen = () => {
         />
       ) : (
         <AuthForm
-          initialValues={{email: '', password: '', name: ''}}
+          initialValues={{email: '', password: ''}}
           buttonText="Login"
           screenName="Login"
           bottomText="Not an Member? Register"

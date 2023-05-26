@@ -10,7 +10,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {useFormik} from 'formik';
 import {Modalize, useModalize} from 'react-native-modalize';
 import {useKeyboard} from '@react-native-community/hooks';
-import {useTransaction} from '../../../entity/hook/useTransaction';
+import {useTransaction} from '../../entity/hook/useTransaction';
 import {transactionValidationSchema} from '../../../validationShema';
 
 const TransactionForm = () => {
@@ -181,8 +181,8 @@ const TransactionForm = () => {
           <RadioButton.Group
             onValueChange={handleChange('category')}
             value={values.category}>
-            {categories.map(i => (
-              <View style={formStyle.div}>
+            {categories.map((i, index) => (
+              <View style={formStyle.div} key={index}>
                 <RadioButton value={i} color={theme.text.exeeria} />
                 <Text style={formStyle.text}>{i}</Text>
               </View>

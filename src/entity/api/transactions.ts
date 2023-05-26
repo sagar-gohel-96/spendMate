@@ -1,4 +1,4 @@
-import {Transaction} from '../../src/types';
+import {Transaction} from '../../types';
 import {apiClient} from '../apiClient';
 
 const getTransactions = async () => {

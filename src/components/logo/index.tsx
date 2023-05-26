@@ -2,7 +2,7 @@ import React from 'react';
 import {Text} from 'react-native';
 import {Image, StyleSheet} from 'react-native';
 import {View} from 'react-native';
-import {logo} from '../../../assets/Image';
+import {logo} from '../../assets/Image';
 import {fonts} from '../../utils/fonts';
 import {theme} from '../../utils/theme';
 

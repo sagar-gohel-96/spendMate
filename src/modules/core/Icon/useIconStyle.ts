@@ -1,4 +1,4 @@
-import {IconList} from '../../../../assets/Icon/icon';
+import {IconList} from '../../../assets/Icon/icon';
 import {theme} from '../../../utils/theme';
 
 export const getIconStyle = (

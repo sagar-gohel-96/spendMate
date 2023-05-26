@@ -1,20 +1,38 @@
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {Dimensions} from 'react-native';
 import {Image, StyleSheet, Text, View} from 'react-native';
-import {landing} from '../../../assets/Image';
+import {landing} from '../../assets/Image';
 import {fonts} from '../../utils/fonts';
 import {theme} from '../../utils/theme';
-import {useNavigation} from '@react-navigation/native';
+// import {useNavigation} from '@react-navigation/native';
 import Logo from '../../components/logo';
 import {Icon} from '../../modules/core';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useUser} from '../../entity/hook/useUser';
+import {useDispatch} from 'react-redux';
+import {setUser} from '../../features/user/userSlice';
+import {useNavigation} from '@react-navigation/native';
 
 const LandingScreen = () => {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation();
+  const {getUser} = useUser();
+  const dispatch = useDispatch();
+
+  const fetchUser = useCallback(async () => {
+    const token = await AsyncStorage.getItem('token');
+
+    if (!token) {
+      navigation.navigate('AuthScreen' as never);
+    } else {
+      const res = await getUser.refetch();
+      dispatch(setUser(res.data));
+      navigation.navigate('MainScreen' as never);
+    }
+  }, [dispatch, getUser, navigation]);
+
   useEffect(() => {
-    setTimeout(() => {
-      navigation.replace('MainScreen');
-    }, 2000);
-  }, [navigation]);
+    fetchUser();
+  }, [fetchUser]);
 
   return (
     <View style={landingScreenStyle.container}>
@@ -106,7 +124,7 @@ const landingScreenStyle = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 100,
-    backgroundColor: theme.colors.pending,
+    backgroundColor: theme.status.pending,
     marginHorizontal: 2,
   },
   dotContainer: {

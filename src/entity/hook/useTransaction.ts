@@ -1,7 +1,7 @@
 import {useMutation, useQuery} from 'react-query';
 import {TransactionService} from '../api/transactions';
 import {useMemo} from 'react';
-import {Transaction} from '../../src/types';
+import {Transaction} from '../../types';
 
 export const useTransaction = () => {
   const {data, isLoading, refetch} = useQuery('get-transactions', async () => {

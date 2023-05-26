@@ -2,12 +2,13 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {Text} from 'react-native';
 import {Divider, Icon} from '../../modules/core';
-import {IconList} from '../../../assets/Icon/icon';
+import {IconList} from '../../assets/Icon/icon';
 import {theme} from '../../utils/theme';
 import {getIconStyle} from '../../modules/core/Icon/useIconStyle';
 import {fonts} from '../../utils/fonts';
 
 export type Transactions = {
+  id: string;
   category: IconList;
   description?: string;
   amount: string;
@@ -15,41 +16,49 @@ export type Transactions = {
 
 const transactions: Transactions = [
   {
+    id: '1',
     category: IconList.Clothing,
     description: '3 frocks',
     amount: '$50.00',
   },
   {
+    id: '2',
     category: IconList.Education,
     description: 'Books and school supplies',
     amount: '$100.00',
   },
   {
+    id: '3',
     category: IconList.Entertainment,
     description: 'Movie tickets and streaming services',
     amount: '$25.00',
   },
   {
+    id: '4',
     category: IconList.Food,
     description: 'Groceries and dining out',
     amount: '$200.00',
   },
   {
+    id: '5',
     category: IconList.GiftsDonation,
     description: 'Gifts for others and charitable donations',
     amount: '$50.00',
   },
   {
+    id: '6',
     category: IconList.Transportation,
     description: 'Gas, public transportation, and car maintenance',
     amount: '$150.00',
   },
   {
+    id: '7',
     category: IconList.Health,
     description: 'Healthcare expenses and gym memberships',
     amount: '$75.00',
   },
   {
+    id: '8',
     category: IconList.Housing,
     description: 'Rent, mortgage, and home repairs',
     amount: '$1000.00',
@@ -64,12 +73,12 @@ const TransactionCard = () => {
       </View>
       <Divider marginVertical={10} />
       <View>
-        {transactions.map(i => {
-          const style = getIconStyle(i.category);
+        {transactions.map(item => {
+          const style = getIconStyle(item.category);
           return (
-            <View style={cardStyle.transcation}>
+            <View style={cardStyle.transcation} key={item.id}>
               <Icon
-                name={i.category}
+                name={item.category}
                 size="md"
                 backgroundColor={style.backgroundColor}
                 color={style.color}
@@ -78,16 +87,16 @@ const TransactionCard = () => {
                 <View style={cardStyle.transactionContainer}>
                   <View>
                     <Text style={cardStyle.categoryText}>
-                      {i.category.toLocaleUpperCase()}
+                      {item.category.toLocaleUpperCase()}
                     </Text>
                   </View>
-                  <Text style={cardStyle.amount}>{i.amount}</Text>
+                  <Text style={cardStyle.amount}>{item.amount}</Text>
                 </View>
                 <Text
                   ellipsizeMode="tail"
                   numberOfLines={1}
                   style={cardStyle.descriptionText}>
-                  {i.description}
+                  {item.description}
                 </Text>
               </View>
             </View>

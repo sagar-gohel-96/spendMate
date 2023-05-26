@@ -7,6 +7,13 @@ import {fonts} from '../../utils/fonts';
 import {useKeyboard} from '@react-native-community/hooks';
 import {Icon} from '../../modules/core';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {useUser} from '../../entity/hook/useUser';
+import {LoginUserPayload} from '../../types';
+import {useNavigation} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Snackbar from 'react-native-snackbar';
+import {useDispatch} from 'react-redux';
+import {setUser} from '../../features/user/userSlice';
 
 interface AuthProps {
   screenName: string;
@@ -18,8 +25,8 @@ interface AuthProps {
 }
 
 type SignUpField = {
+  name?: string;
   email: string;
-  name: string;
   password: string;
 };
 
@@ -27,6 +34,9 @@ const AuthForm: React.FC<PropsWithChildren<AuthProps>> = props => {
   const {screenName, initialValues, buttonText, bottomText, onPress} = props;
   const keyboard = useKeyboard();
   const scrollViewRef = useRef<ScrollView | null>(null);
+  const {loginUserIsLoading, loginUserMutate, getUser} = useUser();
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (keyboard.keyboardShown) {
@@ -35,11 +45,31 @@ const AuthForm: React.FC<PropsWithChildren<AuthProps>> = props => {
   }, [keyboard, keyboard.keyboardShown]);
 
   const {handleChange, handleSubmit, values} = useFormik({
-    initialValues: initialValues,
-    onSubmit: (value, {resetForm}) => {
-      resetForm({});
+    initialValues: {email: 'sagar12@gmail.com', password: 'sagar'},
+    onSubmit: async (value: LoginUserPayload, {resetForm}) => {
+      try {
+        const res = await loginUserMutate(value);
+
+        if (res.success) {
+          await AsyncStorage.setItem('token', res.data);
+
+          const userData = await getUser.refetch();
+          dispatch(setUser(userData.data));
+
+          Snackbar.show({
+            text: 'Login Successful',
+            duration: Snackbar.LENGTH_LONG,
+          });
+
+          resetForm({});
+          navigation.navigate('MainScreen' as never);
+        }
+      } catch (error) {
+        console.log(error);
+      }
     },
   });
+
   return (
     <ScrollView contentContainerStyle={formStyle.container}>
       <View style={formStyle.root}>
@@ -49,23 +79,12 @@ const AuthForm: React.FC<PropsWithChildren<AuthProps>> = props => {
         </View>
         <View>
           <View style={formStyle.header}>
-            <Icon name="rename-box" color={theme.text.exeeria} size="sm" />
-            <Text style={formStyle.text}>Name</Text>
-          </View>
-          <TextInput
-            value={values.name}
-            onChange={handleChange('name')}
-            style={formStyle.input}
-          />
-        </View>
-        <View>
-          <View style={formStyle.header}>
             <Icon name="email" color={theme.text.exeeria} size="sm" />
             <Text style={formStyle.text}>Email</Text>
           </View>
           <TextInput
             value={values.email}
-            onChange={handleChange('email')}
+            onChangeText={handleChange('email')}
             style={formStyle.input}
           />
         </View>
@@ -77,7 +96,7 @@ const AuthForm: React.FC<PropsWithChildren<AuthProps>> = props => {
           <TextInput
             value={values.password}
             style={formStyle.input}
-            onChange={handleChange('password')}
+            onChangeText={handleChange('password')}
             secureTextEntry={true}
           />
         </View>
@@ -85,12 +104,11 @@ const AuthForm: React.FC<PropsWithChildren<AuthProps>> = props => {
           style={formStyle.button}
           textColor="white"
           onPress={handleSubmit}>
-          {buttonText}
+          {loginUserIsLoading ? 'Loading...' : buttonText}
         </Button>
         <TouchableOpacity>
           <Text style={formStyle.loginText} onPress={onPress}>
             {bottomText}
-            {'aaa '}
           </Text>
         </TouchableOpacity>
       </View>

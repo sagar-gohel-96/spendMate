@@ -4,7 +4,7 @@ import TransactionForm from './TransactionForm';
 import {theme} from '../../utils/theme';
 import {Text} from 'react-native';
 import {fonts} from '../../utils/fonts';
-import {transaction} from '../../../assets/Image';
+import {transaction} from '../../assets/Image';
 
 const TransactionScreen = () => {
   return (

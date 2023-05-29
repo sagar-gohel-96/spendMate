@@ -1,7 +1,7 @@
 import {useMutation, useQuery} from 'react-query';
 import {UserService} from '../api/users';
 import {useMemo} from 'react';
-import {LoginUserPayload} from '../../types';
+import {CreateUserPayload, LoginUserPayload} from '../../types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const useUser = () => {
@@ -23,6 +23,15 @@ export const useUser = () => {
     return res;
   });
 
+  const {
+    data: signupUserData,
+    isLoading: signupUserIsLoading,
+    mutateAsync: signupUserMutate,
+  } = useMutation(async (payload: CreateUserPayload) => {
+    const res = await UserService.signupUser(payload);
+    return res;
+  });
+
   const getUser = useMemo(() => {
     return {data, isLoading, refetch};
   }, [data, isLoading, refetch]);
@@ -32,5 +41,8 @@ export const useUser = () => {
     loginUserData,
     loginUserIsLoading,
     loginUserMutate,
+    signupUserData,
+    signupUserIsLoading,
+    signupUserMutate,
   };
 };

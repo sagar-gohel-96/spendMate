@@ -28,7 +28,6 @@ export interface UserSchemaEntity {
   password: string;
   generateAuthToken: () => string;
 }
-
 export type CreateUserPayload = Omit<UserSchemaEntity, 'generateAuthToken'>;
 export type LoginUserPayload = Omit<CreateUserPayload, 'name'>;
 export interface GetUserData

@@ -1,17 +1,16 @@
-import React, {useCallback, useEffect} from 'react';
+import React, {useCallback} from 'react';
 import {Dimensions} from 'react-native';
 import {Image, StyleSheet, Text, View} from 'react-native';
 import {landing} from '../../assets/Image';
 import {fonts} from '../../utils/fonts';
 import {theme} from '../../utils/theme';
-// import {useNavigation} from '@react-navigation/native';
 import Logo from '../../components/logo';
 import {Icon} from '../../modules/core';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useUser} from '../../entity/hook/useUser';
 import {useDispatch} from 'react-redux';
 import {setUser} from '../../features/user/userSlice';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 
 const LandingScreen = () => {
   const navigation = useNavigation();
@@ -30,9 +29,11 @@ const LandingScreen = () => {
     }
   }, [dispatch, getUser, navigation]);
 
-  useEffect(() => {
-    fetchUser();
-  }, [fetchUser]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchUser();
+    }, [fetchUser]),
+  );
 
   return (
     <View style={landingScreenStyle.container}>

@@ -19,7 +19,7 @@ const LandingScreen = () => {
 
   const fetchUser = useCallback(async () => {
     const token = await AsyncStorage.getItem('token');
-
+    console.log(token);
     if (!token) {
       navigation.navigate('AuthScreen' as never);
     } else {

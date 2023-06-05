@@ -1,26 +1,36 @@
-import {Transaction} from '../../types';
+import {CreateTransactionPayload, UpdateTransactionPayload} from 'types';
 import {apiClient} from '../apiClient';
 
 const getTransactions = async () => {
   const res = await apiClient.get('/transaction');
   return res.data;
 };
-
-const createTransactions = async (payload: Transaction) => {
+const createTransactions = async (payload: CreateTransactionPayload) => {
   const res = await apiClient.post('/transaction/create', payload);
   return res.data;
 };
 
 const updateTransactions = async (
   id: String,
-  payload: Partial<Transaction>,
+  payload: UpdateTransactionPayload,
 ) => {
-  const res = await apiClient.put(`'/transaction/${id}`, payload);
+  const res = await apiClient.put(`/transaction/${id}`, payload);
   return res.data;
 };
 
+const deleteTransaction = async (id: String) => {
+  const res = await apiClient.delete(`/transaction/${id}`);
+  return res.data;
+};
+
+const getTransaction = async (id: String) => {
+  const res = await apiClient.get(`/transaction/${id}`);
+  return res.data;
+};
 export const TransactionService = {
   getTransactions,
   createTransactions,
   updateTransactions,
+  deleteTransaction,
+  getTransaction,
 };

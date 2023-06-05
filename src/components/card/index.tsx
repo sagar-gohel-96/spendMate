@@ -1,108 +1,119 @@
-import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import React, {useCallback, useEffect} from 'react';
+import {ActivityIndicator, ScrollView, StyleSheet, View} from 'react-native';
 import {Text} from 'react-native';
 import {Divider, Icon} from '../../modules/core';
-import {IconList} from '../../assets/Icon/icon';
 import {theme} from '../../utils/theme';
-import {getIconStyle} from '../../modules/core/Icon/useIconStyle';
 import {fonts} from '../../utils/fonts';
+import {useTransaction} from '../../../src/entity/hook/useTransaction';
+import {getIconStyle} from '../../../src/modules/core/Icon/useIconStyle';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import {useNavigation} from '@react-navigation/native';
+import {
+  CreateTransactionPayload,
+  GetTransactionData,
+  TransactionType,
+} from 'types';
+import {currency} from '../../utils';
+import dayjs from 'dayjs';
 
-export type Transactions = {
-  id: string;
-  category: IconList;
-  description?: string;
-  amount: string;
-}[];
-
-const transactions: Transactions = [
-  {
-    id: '1',
-    category: IconList.Clothing,
-    description: '3 frocks',
-    amount: '$50.00',
-  },
-  {
-    id: '2',
-    category: IconList.Education,
-    description: 'Books and school supplies',
-    amount: '$100.00',
-  },
-  {
-    id: '3',
-    category: IconList.Entertainment,
-    description: 'Movie tickets and streaming services',
-    amount: '$25.00',
-  },
-  {
-    id: '4',
-    category: IconList.Food,
-    description: 'Groceries and dining out',
-    amount: '$200.00',
-  },
-  {
-    id: '5',
-    category: IconList.GiftsDonation,
-    description: 'Gifts for others and charitable donations',
-    amount: '$50.00',
-  },
-  {
-    id: '6',
-    category: IconList.Transportation,
-    description: 'Gas, public transportation, and car maintenance',
-    amount: '$150.00',
-  },
-  {
-    id: '7',
-    category: IconList.Health,
-    description: 'Healthcare expenses and gym memberships',
-    amount: '$75.00',
-  },
-  {
-    id: '8',
-    category: IconList.Housing,
-    description: 'Rent, mortgage, and home repairs',
-    amount: '$1000.00',
-  },
-];
 const TransactionCard = () => {
+  const {getTransactions} = useTransaction();
+  const navigation = useNavigation<any>();
+  const {isLoading} = getTransactions;
+
+  useEffect(() => {
+    getTransactions.refetch();
+  }, [getTransactions]);
+
+  const amountString = useCallback(
+    ({amount, type}: {amount: number; type: TransactionType}) => {
+      if (type === 'Expense') {
+        return `-${amount + currency}`;
+      } else {
+        return `+${amount + currency}`;
+      }
+    },
+    [],
+  );
+
+  const calculateTotalAmount = useCallback(() => {
+    if (!getTransactions.data || !getTransactions.data.data) {
+      return 0;
+    }
+    const transactions = getTransactions.data.data;
+    const total = transactions.reduce(
+      (acc: number, transaction: CreateTransactionPayload) => {
+        if (transaction.transactionType === 'Expense') {
+          return acc - transaction.amount;
+        } else if (transaction.transactionType === 'Income') {
+          return acc + transaction.amount;
+        }
+        return acc;
+      },
+      0,
+    );
+    return `${total + currency}`;
+  }, [getTransactions.data]);
+
   return (
     <View style={cardStyle.container}>
       <View style={cardStyle.headContainer}>
-        <Text style={cardStyle.headText}>Monday</Text>
-        <Text style={cardStyle.headText}>$1413</Text>
+        <Text style={cardStyle.headText}>Transactions</Text>
+        <Text style={cardStyle.headText}>{calculateTotalAmount()}</Text>
       </View>
       <Divider marginVertical={10} />
-      <View>
-        {transactions.map(item => {
-          const style = getIconStyle(item.category);
-          return (
-            <View style={cardStyle.transcation} key={item.id}>
-              <Icon
-                name={item.category}
-                size="md"
-                backgroundColor={style.backgroundColor}
-                color={style.color}
-              />
-              <View style={cardStyle.section}>
-                <View style={cardStyle.transactionContainer}>
-                  <View>
-                    <Text style={cardStyle.categoryText}>
-                      {item.category.toLocaleUpperCase()}
-                    </Text>
+      <ScrollView>
+        <View>
+          {getTransactions?.data?.data.length <= 0 && (
+            <Text style={cardStyle.emptyData}> No Transaction Found</Text>
+          )}
+          {isLoading && <ActivityIndicator />}
+          {getTransactions?.data?.data &&
+            getTransactions?.data?.data.map((item: GetTransactionData) => {
+              const style = getIconStyle(item.category as any);
+              return (
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate('Transaction', {id: item._id})
+                  }
+                  key={item._id}>
+                  <View style={cardStyle.transcation}>
+                    <Icon
+                      name={item.category}
+                      size="md"
+                      backgroundColor={style.backgroundColor}
+                      color={style.color}
+                    />
+                    <View style={cardStyle.section}>
+                      <View style={cardStyle.transactionContainer}>
+                        <View>
+                          <Text style={cardStyle.categoryText}>
+                            {item.category.toLocaleUpperCase()}
+                          </Text>
+                        </View>
+                        <Text style={cardStyle.amount}>
+                          {amountString({
+                            amount: item.amount,
+                            type: item.transactionType,
+                          })}
+                        </Text>
+                        <Text style={cardStyle.descriptionText}>
+                          {dayjs(item.date).format('L LT')}
+                        </Text>
+                      </View>
+                      <Text
+                        ellipsizeMode="tail"
+                        numberOfLines={1}
+                        style={cardStyle.descriptionText}>
+                        {item.description ?? '...'}
+                      </Text>
+                    </View>
                   </View>
-                  <Text style={cardStyle.amount}>{item.amount}</Text>
-                </View>
-                <Text
-                  ellipsizeMode="tail"
-                  numberOfLines={1}
-                  style={cardStyle.descriptionText}>
-                  {item.description}
-                </Text>
-              </View>
-            </View>
-          );
-        })}
-      </View>
+                </TouchableOpacity>
+              );
+            })}
+        </View>
+      </ScrollView>
     </View>
   );
 };
@@ -156,5 +167,9 @@ const cardStyle = StyleSheet.create({
   section: {
     marginHorizontal: 10,
     flex: 1,
+  },
+  emptyData: {
+    fontFamily: fonts.CarosSoftMedium,
+    textAlign: 'center',
   },
 });

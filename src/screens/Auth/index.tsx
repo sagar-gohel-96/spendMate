@@ -57,7 +57,7 @@ const AuthScreen = () => {
     async (value: LoginUserPayload, {resetForm}: any) => {
       try {
         const res = await loginUserMutate(value);
-
+        console.log(res, 'login');
         if (res.success) {
           await AsyncStorage.setItem('token', res.data);
 

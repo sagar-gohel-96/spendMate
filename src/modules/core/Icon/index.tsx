@@ -3,6 +3,7 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {IconSize, useIconSize} from './useIconSize';
 import {useSize} from './useSize';
+import {IconList} from '../../../assets/Icon/icon';
 
 interface IconProps {
   name: string;
@@ -18,7 +19,7 @@ const Icon: React.FC<IconProps> = props => {
 
   return (
     <View style={[container, size, {backgroundColor: props.backgroundColor}]}>
-      <VIcon {...props} size={iconSize} name={props.name} />
+      <VIcon {...props} size={iconSize} name={IconList[props.name]} />
     </View>
   );
 };

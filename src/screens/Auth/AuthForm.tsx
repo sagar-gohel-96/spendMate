@@ -36,9 +36,9 @@ const AuthForm: React.FC<PropsWithChildren<AuthProps>> = props => {
     }
   }, [keyboard, keyboard.keyboardShown]);
 
-  const {handleChange, handleSubmit, values} = useFormik({
+  const {handleChange, resetForm, values} = useFormik({
     initialValues: {email: 'sagar12@gmail.com', password: 'sagar'},
-    onSubmit: async (value: SignUpField, {resetForm}) => {
+    onSubmit: async (value: SignUpField) => {
       try {
         onSubmit(value, {resetForm});
       } catch (error) {
@@ -92,11 +92,11 @@ const AuthForm: React.FC<PropsWithChildren<AuthProps>> = props => {
         <Button
           style={formStyle.button}
           textColor="white"
-          onPress={handleSubmit}>
+          onPress={() => onSubmit(values, {resetForm})}>
           {isUserLoading ? 'Loading...' : buttonText}
         </Button>
         <TouchableOpacity>
-          <Text style={formStyle.loginText} onPress={onPress}>
+          <Text style={formStyle.loginText} onPress={() => onPress}>
             {bottomText}
           </Text>
         </TouchableOpacity>

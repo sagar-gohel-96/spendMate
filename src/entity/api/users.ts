@@ -3,8 +3,6 @@ import {apiClient} from '../apiClient';
 
 const loginUser = async (payload: LoginUserPayload) => {
   try {
-    // const res = await apiClient.post('/user/login', payload);
-
     const res = await fetch(
       'https://spenmate-backend.vercel.app/api/user/login',
       {
@@ -18,7 +16,6 @@ const loginUser = async (payload: LoginUserPayload) => {
 
     const json = await res.json();
     return json;
-    // return res.data;
   } catch (error) {
     console.log(error);
   }

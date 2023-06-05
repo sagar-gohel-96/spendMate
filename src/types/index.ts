@@ -4,13 +4,6 @@ export interface BaseEntity {
   updatedAt: Date;
 }
 
-export type Transaction = {
-  category: String;
-  type: TransactionType;
-  desc?: String;
-  date: Date;
-};
-
 export enum TransactionType {
   Expense = 'Expense',
   Income = 'Income',
@@ -35,3 +28,18 @@ export interface GetUserData
     Omit<CreateUserPayload, 'password'> {}
 
 export type UpdateUserPayload = Partial<CreateUserPayload>;
+
+export interface TransactionSchemaEntity {
+  userId: string;
+  transactionType: TransactionType;
+  category: string;
+  description: string;
+  amount: number;
+  date: Date;
+}
+
+export type CreateTransactionPayload = TransactionSchemaEntity;
+
+export type GetTransactionData = BaseEntity & CreateTransactionPayload;
+
+export type UpdateTransactionPayload = Partial<CreateTransactionPayload>;

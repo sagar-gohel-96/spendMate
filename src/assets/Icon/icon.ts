@@ -8,4 +8,10 @@ export enum IconList {
   Education = 'school',
   GiftsDonation = 'gift',
   Search = 'magnify',
+  Type = 'format-list-bulleted-type',
+  Category = 'shape',
+  Date = 'clipboard-text-clock-outline',
+  Amount = 'currency-rupee',
+  Description = 'order-bool-descending',
+  PersonalCare = 'doctor',
 }

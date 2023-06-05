@@ -2,10 +2,9 @@ import React from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {Avatar} from 'react-native-paper';
 import Logo from '../../components/logo';
-import {HomeBanner, Icon} from '../../modules/core';
+import {HomeBanner} from '../../modules/core';
 import {theme} from '../../utils/theme';
 import TransactionCard from '../../components/card';
-import {IconList} from '../../assets/Icon/icon';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../app/store';
 
@@ -13,32 +12,23 @@ const HomeScreen = () => {
   const {
     user: {user},
   } = useSelector((store: RootState) => store);
-  const {
-    searchContainer,
-    rootContainer,
-    headerContainer,
-    primaryText,
-    header,
-    secondaryText,
-    sectionOne,
-  } = homeScreenStyle;
 
   return (
     <ScrollView>
-      <View style={rootContainer}>
-        <View style={searchContainer}>
+      <View style={homeScreenStyle.rootContainer}>
+        <View style={homeScreenStyle.sectionOne}>
           <Logo />
-          <Icon name={IconList.Search} size="lg" />
-        </View>
-        <View style={header}>
-          <View style={sectionOne}>
-            <Avatar.Text
-              size={40}
-              label={user ? user.name.charAt(0).toUpperCase() : 'G'}
-            />
-            <View style={headerContainer}>
-              <Text style={primaryText}>Morning</Text>
-              <Text style={secondaryText}>
+
+          <View style={homeScreenStyle.headerContainer}>
+            <View style={homeScreenStyle.avatar}>
+              <Avatar.Text
+                size={40}
+                label={user ? user.name.charAt(0).toUpperCase() : 'G'}
+              />
+            </View>
+            <View>
+              <Text style={homeScreenStyle.primaryText}>Morning</Text>
+              <Text style={homeScreenStyle.secondaryText}>
                 {user ? user.name : 'Guest User'}
               </Text>
             </View>
@@ -60,13 +50,13 @@ const homeScreenStyle = StyleSheet.create({
     backgroundColor: theme.colors.white,
   },
   searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
     marginVertical: 8,
+    borderWidth: 1,
   },
   headerContainer: {
     marginLeft: 8,
+    flexDirection: 'row',
   },
   primaryText: {fontWeight: '500', fontSize: 14},
   secondaryText: {
@@ -85,5 +75,12 @@ const homeScreenStyle = StyleSheet.create({
     height: 40,
     justifyContent: 'center',
   },
-  sectionOne: {flexDirection: 'row'},
+  sectionOne: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    margin: 8,
+  },
+  avatar: {
+    marginRight: 10,
+  },
 });

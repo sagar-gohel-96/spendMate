@@ -1,9 +1,10 @@
-import {useMutation, useQuery} from 'react-query';
+import {useMutation, useQuery, useQueryClient} from 'react-query';
 import {TransactionService} from '../api/transactions';
 import {useMemo} from 'react';
 import {CreateTransactionPayload, UpdateTransactionPayload} from 'types';
 
 export const useTransaction = (id?: String) => {
+  const queryClient = useQueryClient();
   const {data, isLoading, refetch} = useQuery('get-transactions', async () => {
     const res = await TransactionService.getTransactions();
     return res;
@@ -19,15 +20,28 @@ export const useTransaction = (id?: String) => {
       const res = await TransactionService.createTransactions(payload);
       return res.data;
     },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({queryKey: ['get-transactions']});
+      },
+    },
   );
   const {
     data: deleteTransactionData,
     isLoading: deleteTransactionLoading,
     mutateAsync: mutateDeleteTransaction,
-  } = useMutation('delete-transactions', async (transactionId: String) => {
-    const res = await TransactionService.deleteTransaction(transactionId);
-    return res.data;
-  });
+  } = useMutation(
+    'delete-transactions',
+    async (transactionId: String) => {
+      const res = await TransactionService.deleteTransaction(transactionId);
+      return res.data;
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({queryKey: ['get-transactions']});
+      },
+    },
+  );
 
   const {
     data: updateTransactionData,
@@ -48,6 +62,11 @@ export const useTransaction = (id?: String) => {
       );
       return res.data;
     },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({queryKey: ['get-transactions']});
+      },
+    },
   );
 
   const getTransactions = useMemo(() => {
@@ -58,12 +77,20 @@ export const useTransaction = (id?: String) => {
     data: singleTransaction,
     isLoading: singleTransactionLoading,
     refetch: singleTransactionRefetch,
-  } = useQuery(['get-single-transaction', id], async () => {
-    if (id) {
-      const transaction = await TransactionService.getTransaction(id);
-      return transaction;
-    }
-  });
+  } = useQuery(
+    ['get-single-transaction', id],
+    async () => {
+      if (id) {
+        const transaction = await TransactionService.getTransaction(id);
+        return transaction;
+      }
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({queryKey: ['get-transactions']});
+      },
+    },
+  );
 
   return {
     getTransactions,

@@ -1,35 +1,41 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
+  View,
 } from 'react-native';
-import {View} from 'react-native';
 import {Button, RadioButton} from 'react-native-paper';
+import {useKeyboard} from '@react-native-community/hooks';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import {Modalize, useModalize} from 'react-native-modalize';
+import Snackbar from 'react-native-snackbar';
+import {useSelector} from 'react-redux';
+import {RootState} from 'app/store';
+import {useFormik} from 'formik';
+import {
+  useNavigation,
+  useRoute,
+  RouteProp,
+  useFocusEffect,
+} from '@react-navigation/native';
 import {fonts} from '../../utils/fonts';
 import {theme} from '../../utils/theme';
 import {Icon} from '../../modules/core';
 import {categories} from '../../utils/categories';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import {useFormik} from 'formik';
-import {Modalize, useModalize} from 'react-native-modalize';
-import {useKeyboard} from '@react-native-community/hooks';
 import {useTransaction} from '../../entity/hook/useTransaction';
 import {transactionValidationSchema} from '../../../validationShema';
-import {useSelector} from 'react-redux';
-import {RootState} from 'app/store';
 import {CreateTransactionPayload, TransactionType} from '../../types';
-import Snackbar from 'react-native-snackbar';
-import {useNavigation, useRoute, RouteProp} from '@react-navigation/native';
-import {useQueryClient} from 'react-query';
 
 export type MyRouteProp = RouteProp<Record<string, {id?: string}>>;
 
 const TransactionForm = () => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [paramId, setParamId] = useState('');
+  // const isFocused = useIsFocused();
+
   const {
     mutateCreateTransaction,
     createTransactionLoading,
@@ -44,19 +50,13 @@ const TransactionForm = () => {
   const {
     user: {user},
   } = useSelector((store: RootState) => store);
+
   const {ref, open} = useModalize();
   const keyboard = useKeyboard();
   const navigation = useNavigation<any>();
-  const {params} = useRoute<MyRouteProp>();
-
-  useEffect(() => {
-    if (params && params?.id) {
-      setParamId(params?.id);
-    }
-  }, [params]);
-
+  const route = useRoute<MyRouteProp>();
   const scrollViewRef = useRef<ScrollView | null>(null);
-  const queryClient = useQueryClient();
+
   useEffect(() => {
     if (keyboard.keyboardShown) {
       scrollViewRef.current?.scrollTo({y: 230, animated: true});
@@ -65,12 +65,12 @@ const TransactionForm = () => {
 
   const formik = useFormik({
     initialValues: {
-      userId: user?._id!,
-      category: categories[0],
-      date: new Date(),
-      description: '',
-      transactionType: TransactionType.Expense,
-      amount: 0,
+      // userId: user?._id!,
+      // category: categories[0],
+      // date: new Date(),
+      // description: '',
+      // transactionType: TransactionType.Expense,
+      // amount: 0,
     } as CreateTransactionPayload,
     validationSchema: transactionValidationSchema,
     onSubmit: () => {},
@@ -79,18 +79,111 @@ const TransactionForm = () => {
   const {values, handleChange, resetForm, setFieldValue, errors} = formik;
 
   const formikRef = useRef(formik);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (singleTransaction && paramId) {
+        formikRef.current?.setValues({
+          userId: singleTransaction.data.userId,
+          category: singleTransaction.data.category,
+          date: new Date(singleTransaction.data.date),
+          description: singleTransaction.data.description,
+          transactionType: singleTransaction.data.transactionType,
+          amount: singleTransaction.data.amount,
+        });
+      } else {
+        formikRef.current?.setValues({
+          userId: user?._id!,
+          category: categories[0],
+          date: new Date(),
+          description: '',
+          transactionType: TransactionType.Expense,
+          amount: 0,
+        });
+      }
+    }, [paramId, singleTransaction, user?._id]),
+    // if (singleTransaction && paramId) {
+    //   formikRef.current?.setValues({
+    //     userId: singleTransaction.data.userId,
+    //     category: singleTransaction.data.category,
+    //     date: new Date(singleTransaction.data.date),
+    //     description: singleTransaction.data.description,
+    //     transactionType: singleTransaction.data.transactionType,
+    //     amount: singleTransaction.data.amount,
+    //   });
+    // } else {
+    //   formikRef.current?.setValues({
+    //     userId: user?._id!,
+    //     category: categories[0],
+    //     date: new Date(),
+    //     description: '',
+    //     transactionType: TransactionType.Expense,
+    //     amount: 0,
+    //   });
+    // }
+  );
+
+  // useEffect(() => {
+  //   if (singleTransaction && paramId) {
+  //     formikRef.current?.setValues({
+  //       userId: singleTransaction.data.userId,
+  //       category: singleTransaction.data.category,
+  //       date: new Date(singleTransaction.data.date),
+  //       description: singleTransaction.data.description,
+  //       transactionType: singleTransaction.data.transactionType,
+  //       amount: singleTransaction.data.amount,
+  //     });
+  //   }
+  // }, [paramId, singleTransaction, user?._id]);
+
+  const clearRouteData = useCallback(() => {
+    resetForm({});
+    setParamId('');
+    navigation.setParams({});
+  }, [navigation, resetForm]);
+
   useEffect(() => {
-    if (singleTransaction) {
-      formikRef.current?.setValues({
-        userId: singleTransaction.data.userId,
-        category: singleTransaction.data.category,
-        date: new Date(singleTransaction.data.date),
-        description: singleTransaction.data.description,
-        transactionType: singleTransaction.data.transactionType,
-        amount: singleTransaction.data.amount,
-      });
-    }
-  }, [singleTransaction, user?._id]);
+    setParamId(route.params?.id ?? '');
+    resetForm({});
+    return () => {
+      clearRouteData();
+    };
+  }, [clearRouteData, resetForm, route.params?.id]);
+
+  useEffect(() => {
+    setParamId(route.params?.id ?? '');
+    // resetForm({});
+  }, [paramId, resetForm, route.params]);
+
+  // useEffect(() => {
+  //   // if (params && params?.id) {
+  //   //   setParamId(params?.id);
+  //   // }
+  //   resetForm({});
+  //   return () => {
+  //     console.log('inside useeffect RETURN', params);
+
+  //     resetForm({});
+  //     setParamId('');
+  //   };
+  // }, [isFocused, resetForm, params, paramId]);
+
+  // useEffect(() => {
+  //   const clearRouteData = () => {
+  //     // Clear your route data here
+  //     resetForm({});
+  //     setParamId('');
+  //     navigation.setParams({});
+  //   };
+
+  //   const unsubscribe = navigation.addListener('blur', clearRouteData);
+
+  //   return () => {
+  //     unsubscribe();
+  //   };
+  // }, [navigation, resetForm]);
+
+  console.log('************** paramId', paramId);
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -102,6 +195,44 @@ const TransactionForm = () => {
 
   const handleConfirm = (date: Date) => {
     setFieldValue('date', date);
+  };
+  // const clearRouteData = async () => {
+  //   resetForm({});
+  //   setParamId('');
+  //   navigation.setParams({});
+  // };
+
+  const handleCreateTransaction = async () => {
+    if (Object.keys(errors).length > 0) {
+      Snackbar.show({
+        text: JSON.stringify(errors),
+        duration: Snackbar.LENGTH_LONG,
+      });
+      return;
+    }
+    await mutateCreateTransaction(values).then(() => {
+      clearRouteData();
+    });
+    Snackbar.show({
+      text: 'Transaction Created',
+      duration: Snackbar.LENGTH_LONG,
+    });
+    navigation.navigate('Home');
+  };
+
+  const handleUpdateTransaction = async () => {
+    await mutateUpdateTransaction({
+      transactionId: paramId,
+      payload: values,
+    });
+    clearRouteData();
+    navigation.navigate('Home');
+  };
+
+  const handleDeleteTransaction = async () => {
+    await mutateDeleteTransaction(paramId);
+    clearRouteData();
+    navigation.navigate('Home');
   };
 
   return (
@@ -172,7 +303,6 @@ const TransactionForm = () => {
                 {errors.date as React.ReactNode}
               </Text>
             )}
-
             <View style={formStyle.headerContainer}>
               <Icon name="Description" color={theme.text.exeeria} size="sm" />
               <Text style={formStyle.header}>Description</Text>
@@ -189,6 +319,7 @@ const TransactionForm = () => {
             {errors.description && errors.description && (
               <Text style={formStyle.errorText}>{errors.description}</Text>
             )}
+
             <View style={formStyle.headerContainer}>
               <Icon name="Amount" color={theme.text.exeeria} size="sm" />
               <Text style={formStyle.header}>Amount</Text>
@@ -215,32 +346,40 @@ const TransactionForm = () => {
                 <Button
                   style={formStyle.button}
                   textColor="white"
-                  onPress={async () => {
-                    await mutateDeleteTransaction(paramId);
-                    resetForm({});
-                    navigation.navigate('Home');
-                    Snackbar.show({
-                      text: 'Transaction deleted',
-                      duration: Snackbar.LENGTH_LONG,
-                    });
-                  }}>
+                  onPress={
+                    handleDeleteTransaction
+                    //   async () => {
+                    //   await mutateDeleteTransaction(paramId).then(() =>
+                    //     resetForm({}),
+                    //   );
+                    //   setParamId('');
+                    //   navigation.navigate('Home');
+                    //   Snackbar.show({
+                    //     text: 'Transaction deleted',
+                    //     duration: Snackbar.LENGTH_LONG,
+                    //   });
+                    // }
+                  }>
                   {deleteTransactionLoading ? 'Deleting' : 'Delete'}
                 </Button>
                 <Button
                   style={formStyle.button}
                   textColor="white"
-                  onPress={async () => {
-                    await mutateUpdateTransaction({
-                      transactionId: paramId,
-                      payload: values,
-                    });
-                    resetForm({});
-                    navigation.navigate('Home');
-                    Snackbar.show({
-                      text: 'Transaction updated',
-                      duration: Snackbar.LENGTH_LONG,
-                    });
-                  }}>
+                  onPress={
+                    handleUpdateTransaction
+                    //   async () => {
+                    //   await mutateUpdateTransaction({
+                    //     transactionId: paramId,
+                    //     payload: values,
+                    //   });
+                    //   setParamId('');
+                    //   await navigation.navigate('Home');
+                    //   Snackbar.show({
+                    //     text: 'Transaction updated',
+                    //     duration: Snackbar.LENGTH_LONG,
+                    //   });
+                    // }
+                  }>
                   {updateTransactionLoading ? 'Updating' : 'Update'}
                 </Button>
               </View>
@@ -248,25 +387,27 @@ const TransactionForm = () => {
               <Button
                 style={formStyle.button}
                 textColor="white"
-                onPress={async () => {
-                  console.log(values, 'form validation');
-                  if (Object.keys(errors).length > 0) {
-                    Snackbar.show({
-                      text: JSON.stringify(errors),
-                      duration: Snackbar.LENGTH_LONG,
-                    });
-                    return;
-                  }
-                  mutateCreateTransaction(values).then(() => {
-                    queryClient.invalidateQueries('get-transactions');
-                  });
-                  Snackbar.show({
-                    text: 'Transaction Created',
-                    duration: Snackbar.LENGTH_LONG,
-                  });
-                  resetForm({});
-                  navigation.navigate('Home');
-                }}
+                onPress={
+                  handleCreateTransaction
+                  //   async () => {
+                  //   if (Object.keys(errors).length > 0) {
+                  //     Snackbar.show({
+                  //       text: JSON.stringify(errors),
+                  //       duration: Snackbar.LENGTH_LONG,
+                  //     });
+                  //     return;
+                  //   }
+                  //   await mutateCreateTransaction(values).then(() => {
+                  //     setParamId('');
+                  //   });
+                  //   Snackbar.show({
+                  //     text: 'Transaction Created',
+                  //     duration: Snackbar.LENGTH_LONG,
+                  //   });
+                  //   setParamId('');
+                  //   navigation.navigate('Home');
+                  // }
+                }
                 disabled={createTransactionLoading}>
                 {createTransactionLoading ? 'Saving...' : '  Save'}
               </Button>

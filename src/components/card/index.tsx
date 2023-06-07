@@ -14,7 +14,6 @@ import {
   TransactionType,
 } from 'types';
 import {currency} from '../../utils';
-import dayjs from 'dayjs';
 
 const TransactionCard = () => {
   const {getTransactions} = useTransaction();
@@ -96,9 +95,6 @@ const TransactionCard = () => {
                             amount: item.amount,
                             type: item.transactionType,
                           })}
-                        </Text>
-                        <Text style={cardStyle.descriptionText}>
-                          {dayjs(item.date).format('L LT')}
                         </Text>
                       </View>
                       <Text

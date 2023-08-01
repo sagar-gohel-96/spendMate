@@ -1,20 +1,21 @@
 import {useFormik} from 'formik';
 import React, {PropsWithChildren, useEffect, useRef} from 'react';
 import {Text, View, TextInput, StyleSheet, ScrollView} from 'react-native';
-import {Button} from 'react-native-paper';
+import {Button} from 'react-native-ui-lib';
 import {theme} from '../../utils/theme';
 import {fonts} from '../../utils/fonts';
 import {useKeyboard} from '@react-native-community/hooks';
 import {Icon} from '../../modules/core';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {screenType} from '.';
 
 interface AuthProps {
   screenName: string;
   buttonText: string;
-  onPress: (event: UIEvent) => void;
+  onScreenChange: () => void;
   initialValues: SignUpField;
   setScreen?: (value: any) => void;
-  bottomText: String;
+  bottomText: string;
   onSubmit: (value: SignUpField, {resetForm}: any) => void;
   isUserLoading: boolean;
 }
@@ -26,8 +27,14 @@ type SignUpField = {
 };
 
 const AuthForm: React.FC<PropsWithChildren<AuthProps>> = props => {
-  const {screenName, buttonText, bottomText, onPress, onSubmit, isUserLoading} =
-    props;
+  const {
+    screenName,
+    buttonText,
+    bottomText,
+    onSubmit,
+    isUserLoading,
+    onScreenChange,
+  } = props;
   const keyboard = useKeyboard();
   const scrollViewRef = useRef<ScrollView | null>(null);
   useEffect(() => {
@@ -50,13 +57,13 @@ const AuthForm: React.FC<PropsWithChildren<AuthProps>> = props => {
     <ScrollView contentContainerStyle={formStyle.container}>
       <View style={formStyle.root}>
         <View style={formStyle.head}>
-          <Icon name="account-lock-open" color={theme.text.exeeria} size="lg" />
-          <Text style={formStyle.header}>{screenName}</Text>
+          <Icon name="ScreenName" color={theme.text.exeeria} size="lg" />
+          <Text style={formStyle.header}>{screenName?.toUpperCase()}</Text>
         </View>
-        {screenName === 'SIGNUP' && (
+        {screenName === screenType.signup && (
           <View>
             <View style={formStyle.header}>
-              <Icon name="rename-box" color={theme.text.exeeria} size="sm" />
+              <Icon name="Name" color={theme.text.exeeria} size="sm" />
               <Text style={formStyle.text}>Name</Text>
             </View>
             <TextInput
@@ -68,7 +75,7 @@ const AuthForm: React.FC<PropsWithChildren<AuthProps>> = props => {
         )}
         <View>
           <View style={formStyle.header}>
-            <Icon name="email" color={theme.text.exeeria} size="sm" />
+            <Icon name="Email" color={theme.text.exeeria} size="sm" />
             <Text style={formStyle.text}>Email</Text>
           </View>
           <TextInput
@@ -79,7 +86,7 @@ const AuthForm: React.FC<PropsWithChildren<AuthProps>> = props => {
         </View>
         <View>
           <View style={formStyle.header}>
-            <Icon name="onepassword" size="sm" />
+            <Icon name="Password" size="sm" />
             <Text style={formStyle.text}>Password</Text>
           </View>
           <TextInput
@@ -93,10 +100,10 @@ const AuthForm: React.FC<PropsWithChildren<AuthProps>> = props => {
           style={formStyle.button}
           textColor="white"
           onPress={() => onSubmit(values, {resetForm})}>
-          {isUserLoading ? 'Loading...' : buttonText}
+          <Text>{isUserLoading ? 'Loading...' : `${buttonText}`}</Text>
         </Button>
         <TouchableOpacity>
-          <Text style={formStyle.loginText} onPress={() => onPress}>
+          <Text style={formStyle.loginText} onPress={() => onScreenChange()}>
             {bottomText}
           </Text>
         </TouchableOpacity>

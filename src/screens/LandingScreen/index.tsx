@@ -4,13 +4,13 @@ import {Image, StyleSheet, Text, View} from 'react-native';
 import {landing} from '../../assets/Image';
 import {fonts} from '../../utils/fonts';
 import {theme} from '../../utils/theme';
-import Logo from '../../components/logo';
-import {Icon} from '../../modules/core';
+import {setUser} from '../../features/user/userSlice';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useUser} from '../../entity/hook/useUser';
 import {useDispatch} from 'react-redux';
-import {setUser} from '../../features/user/userSlice';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {Icon} from '../../modules/core';
+import {updateTokenHeader} from '../../entity/apiClient';
 
 const LandingScreen = () => {
   const navigation = useNavigation();
@@ -19,10 +19,11 @@ const LandingScreen = () => {
 
   const fetchUser = useCallback(async () => {
     const token = await AsyncStorage.getItem('token');
-    console.log(token);
+    console.log(token, 'token ');
     if (!token) {
       navigation.navigate('AuthScreen' as never);
     } else {
+      await updateTokenHeader();
       const res = await getUser.refetch();
       dispatch(setUser(res.data));
       navigation.navigate('MainScreen' as never);
@@ -37,9 +38,6 @@ const LandingScreen = () => {
 
   return (
     <View style={landingScreenStyle.container}>
-      <View style={landingScreenStyle.logoContainer}>
-        <Logo />
-      </View>
       <View style={landingScreenStyle.sectionTwo}>
         <View style={landingScreenStyle.background} />
         <View style={landingScreenStyle.nextContainer}>

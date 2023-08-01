@@ -14,4 +14,8 @@ export enum IconList {
   Amount = 'currency-rupee',
   Description = 'order-bool-descending',
   PersonalCare = 'doctor',
+  ScreenName = 'account-lock-open',
+  Name = 'rename-box',
+  Email = 'email',
+  Password = 'security',
 }

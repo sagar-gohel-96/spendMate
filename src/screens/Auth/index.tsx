@@ -1,7 +1,7 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import AuthForm from './AuthForm';
 import {View} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useUser} from '../../entity/hook/useUser';
@@ -10,13 +10,20 @@ import Snackbar from 'react-native-snackbar';
 import {setUser} from '../../features/user/userSlice';
 
 export enum screenType {
-  LOGIN = 'LOGIN',
-  SIGNUP = 'SIGNUP',
+  login = 'login',
+  signup = 'signup',
 }
 
 const AuthScreen = () => {
-  const [screen, setScreen] = useState<screenType>(screenType.LOGIN);
+  const [screen, setScreen] = useState<screenType>(screenType.login);
+
   const navigation = useNavigation();
+  const route = useRoute<any>();
+  useEffect(() => {
+    if (route?.params?.type) {
+      setScreen(route.params.type);
+    }
+  }, [route?.params?.type]);
   const {loginUserMutate, signupUserMutate, getUser, loginUserIsLoading} =
     useUser();
   const dispatch = useDispatch();
@@ -40,7 +47,7 @@ const AuthScreen = () => {
           resetForm({});
           navigation.navigate('MainScreen' as never);
         } else {
-          setScreen(screenType.LOGIN);
+          setScreen(screenType.login);
           Snackbar.show({
             text: 'User already have an account, Please login here',
             duration: Snackbar.LENGTH_LONG,
@@ -57,7 +64,6 @@ const AuthScreen = () => {
     async (value: LoginUserPayload, {resetForm}: any) => {
       try {
         const res = await loginUserMutate(value);
-        console.log(res, 'login');
         if (res.success) {
           await AsyncStorage.setItem('token', res.data);
 
@@ -72,7 +78,7 @@ const AuthScreen = () => {
           resetForm({});
           navigation.navigate('MainScreen' as never);
         } else {
-          setScreen(screenType.SIGNUP);
+          setScreen(screenType.signup);
           Snackbar.show({
             text: 'User not found ! Create a new account',
             duration: Snackbar.LENGTH_LONG,
@@ -87,13 +93,13 @@ const AuthScreen = () => {
 
   return (
     <View style={{flex: 1}}>
-      {screen === screenType.SIGNUP ? (
+      {screen === screenType.signup ? (
         <AuthForm
           initialValues={{email: '', password: ''}}
           buttonText="Save"
-          screenName={screenType.SIGNUP}
+          screenName={screenType.signup}
           bottomText="Already Have An Account? Log IN"
-          onPress={() => setScreen(screenType.LOGIN)}
+          onScreenChange={() => setScreen(screenType.login)}
           onSubmit={(value, {resetForm}) =>
             handleSignup(value as CreateUserPayload, {resetForm})
           }
@@ -103,9 +109,11 @@ const AuthScreen = () => {
         <AuthForm
           initialValues={{email: '', password: ''}}
           buttonText="Login"
-          screenName={screenType.LOGIN}
+          screenName={screenType.login}
           bottomText="Not an Member? Register"
-          onPress={() => setScreen(screenType.SIGNUP)}
+          onScreenChange={() => {
+            setScreen(screenType.signup);
+          }}
           onSubmit={handleLogin}
           isUserLoading={loginUserIsLoading}
         />

@@ -11,22 +11,25 @@ const createTransactions = async (payload: CreateTransactionPayload) => {
 };
 
 const updateTransactions = async (
-  id: String,
+  id: string,
   payload: UpdateTransactionPayload,
 ) => {
   const res = await apiClient.put(`/transaction/${id}`, payload);
   return res.data;
 };
 
-const deleteTransaction = async (id: String) => {
+const deleteTransaction = async (id: string) => {
   const res = await apiClient.delete(`/transaction/${id}`);
   return res.data;
 };
 
-const getTransaction = async (id: String) => {
+const getTransaction = async (id: string) => {
+  console.log('inside API call transaction ********', id);
+
   const res = await apiClient.get(`/transaction/${id}`);
   return res.data;
 };
+
 export const TransactionService = {
   getTransactions,
   createTransactions,

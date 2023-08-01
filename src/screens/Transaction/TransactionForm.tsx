@@ -1,13 +1,16 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
+  Alert,
+  Dimensions,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from 'react-native';
-import {Button, RadioButton} from 'react-native-paper';
+import {Button, RadioButton, RadioGroup} from 'react-native-ui-lib';
 import {useKeyboard} from '@react-native-community/hooks';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {Modalize, useModalize} from 'react-native-modalize';
@@ -19,22 +22,37 @@ import {
   useNavigation,
   useRoute,
   RouteProp,
-  useFocusEffect,
+  useIsFocused,
 } from '@react-navigation/native';
 import {fonts} from '../../utils/fonts';
 import {theme} from '../../utils/theme';
 import {Icon} from '../../modules/core';
-import {categories} from '../../utils/categories';
+import {expenseCategories, incomeCategories} from '../../utils/categories';
 import {useTransaction} from '../../entity/hook/useTransaction';
 import {transactionValidationSchema} from '../../../validationShema';
 import {CreateTransactionPayload, TransactionType} from '../../types';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 export type MyRouteProp = RouteProp<Record<string, {id?: string}>>;
+interface TransactionFormProps {
+  close: () => void;
+  id?: string;
+}
 
-const TransactionForm = () => {
+const TransactionForm = (props: TransactionFormProps) => {
+  const {close, id} = props;
+  const navigation = useNavigation<any>();
+  const route = useRoute<MyRouteProp>();
+  const isFocused = useIsFocused();
+  const {ref, open} = useModalize();
+  const keyboard = useKeyboard();
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const [paramId, setParamId] = useState('');
-  // const isFocused = useIsFocused();
+  const [paramId, setParamId] = useState(id);
+  const scrollViewRef = useRef<ScrollView | null>(null);
+
+  const {
+    user: {user},
+  } = useSelector((store: RootState) => store);
 
   const {
     mutateCreateTransaction,
@@ -47,31 +65,10 @@ const TransactionForm = () => {
     deleteTransactionLoading,
   } = useTransaction(paramId);
 
-  const {
-    user: {user},
-  } = useSelector((store: RootState) => store);
-
-  const {ref, open} = useModalize();
-  const keyboard = useKeyboard();
-  const navigation = useNavigation<any>();
-  const route = useRoute<MyRouteProp>();
-  const scrollViewRef = useRef<ScrollView | null>(null);
-
-  useEffect(() => {
-    if (keyboard.keyboardShown) {
-      scrollViewRef.current?.scrollTo({y: 230, animated: true});
-    }
-  }, [keyboard, keyboard.keyboardShown]);
+  console.log(singleTransaction, 'aaa');
 
   const formik = useFormik({
-    initialValues: {
-      // userId: user?._id!,
-      // category: categories[0],
-      // date: new Date(),
-      // description: '',
-      // transactionType: TransactionType.Expense,
-      // amount: 0,
-    } as CreateTransactionPayload,
+    initialValues: {} as CreateTransactionPayload,
     validationSchema: transactionValidationSchema,
     onSubmit: () => {},
   });
@@ -80,114 +77,64 @@ const TransactionForm = () => {
 
   const formikRef = useRef(formik);
 
-  useFocusEffect(
-    useCallback(() => {
-      if (singleTransaction && paramId) {
-        formikRef.current?.setValues({
-          userId: singleTransaction.data.userId,
-          category: singleTransaction.data.category,
-          date: new Date(singleTransaction.data.date),
-          description: singleTransaction.data.description,
-          transactionType: singleTransaction.data.transactionType,
-          amount: singleTransaction.data.amount,
-        });
-      } else {
-        formikRef.current?.setValues({
-          userId: user?._id!,
-          category: categories[0],
-          date: new Date(),
-          description: '',
-          transactionType: TransactionType.Expense,
-          amount: 0,
-        });
-      }
-    }, [paramId, singleTransaction, user?._id]),
-    // if (singleTransaction && paramId) {
-    //   formikRef.current?.setValues({
-    //     userId: singleTransaction.data.userId,
-    //     category: singleTransaction.data.category,
-    //     date: new Date(singleTransaction.data.date),
-    //     description: singleTransaction.data.description,
-    //     transactionType: singleTransaction.data.transactionType,
-    //     amount: singleTransaction.data.amount,
-    //   });
-    // } else {
-    //   formikRef.current?.setValues({
-    //     userId: user?._id!,
-    //     category: categories[0],
-    //     date: new Date(),
-    //     description: '',
-    //     transactionType: TransactionType.Expense,
-    //     amount: 0,
-    //   });
-    // }
-  );
+  useEffect(() => {
+    setParamId(id);
+  }, [id]);
 
-  // useEffect(() => {
-  //   if (singleTransaction && paramId) {
-  //     formikRef.current?.setValues({
-  //       userId: singleTransaction.data.userId,
-  //       category: singleTransaction.data.category,
-  //       date: new Date(singleTransaction.data.date),
-  //       description: singleTransaction.data.description,
-  //       transactionType: singleTransaction.data.transactionType,
-  //       amount: singleTransaction.data.amount,
-  //     });
-  //   }
-  // }, [paramId, singleTransaction, user?._id]);
-
-  const clearRouteData = useCallback(() => {
-    resetForm({});
-    setParamId('');
-    navigation.setParams({});
-  }, [navigation, resetForm]);
+  const setFormValues = useCallback(() => {
+    if (singleTransaction) {
+      formikRef.current?.setValues({
+        userId: singleTransaction.data.userId,
+        category: singleTransaction.data.category,
+        date: new Date(singleTransaction.data.date),
+        description: singleTransaction.data.description,
+        transactionType: singleTransaction.data.transactionType,
+        amount: singleTransaction.data.amount,
+      });
+    } else {
+      formikRef.current?.setValues({
+        userId: user?._id!,
+        category: expenseCategories[0],
+        date: new Date(),
+        description: '',
+        transactionType: TransactionType.Expense,
+        amount: 0,
+      });
+    }
+  }, [singleTransaction, user?._id]);
 
   useEffect(() => {
-    setParamId(route.params?.id ?? '');
-    resetForm({});
-    return () => {
-      clearRouteData();
-    };
-  }, [clearRouteData, resetForm, route.params?.id]);
+    const category =
+      values.transactionType === TransactionType.Expense
+        ? expenseCategories[0]
+        : incomeCategories[0];
+    setFieldValue('category', category);
+  }, [setFieldValue, values.transactionType]);
 
-  useEffect(() => {
-    setParamId(route.params?.id ?? '');
-    // resetForm({});
-  }, [paramId, resetForm, route.params]);
-
-  // useEffect(() => {
-  //   // if (params && params?.id) {
-  //   //   setParamId(params?.id);
-  //   // }
+  // const clearRouteData = useCallback(() => {
   //   resetForm({});
-  //   return () => {
-  //     console.log('inside useeffect RETURN', params);
-
-  //     resetForm({});
-  //     setParamId('');
-  //   };
-  // }, [isFocused, resetForm, params, paramId]);
-
-  // useEffect(() => {
-  //   const clearRouteData = () => {
-  //     // Clear your route data here
-  //     resetForm({});
-  //     setParamId('');
-  //     navigation.setParams({});
-  //   };
-
-  //   const unsubscribe = navigation.addListener('blur', clearRouteData);
-
-  //   return () => {
-  //     unsubscribe();
-  //   };
+  //   setParamId('');
+  //   navigation.setParams({id: null});
   // }, [navigation, resetForm]);
 
-  console.log('************** paramId', paramId);
+  useEffect(() => {
+    // if (!isFocused) {
+    //   clearRouteData();
+    // } else {
+    // setParamId(id ?? '');
+    setFormValues();
+    // }
+  }, [id, setFormValues]);
 
-  const showDatePicker = () => {
+  useEffect(() => {
+    if (keyboard.keyboardShown) {
+      scrollViewRef.current?.scrollTo({y: 230, animated: true});
+    }
+  }, [keyboard, keyboard.keyboardShown]);
+
+  const showDatePicker = useCallback(() => {
     setDatePickerVisibility(true);
-  };
+  }, [setDatePickerVisibility]);
 
   const hideDatePicker = () => {
     setDatePickerVisibility(false);
@@ -196,12 +143,6 @@ const TransactionForm = () => {
   const handleConfirm = (date: Date) => {
     setFieldValue('date', date);
   };
-  // const clearRouteData = async () => {
-  //   resetForm({});
-  //   setParamId('');
-  //   navigation.setParams({});
-  // };
-
   const handleCreateTransaction = async () => {
     if (Object.keys(errors).length > 0) {
       Snackbar.show({
@@ -211,228 +152,253 @@ const TransactionForm = () => {
       return;
     }
     await mutateCreateTransaction(values).then(() => {
-      clearRouteData();
+      // clearRouteData();
     });
     Snackbar.show({
       text: 'Transaction Created',
       duration: Snackbar.LENGTH_LONG,
     });
-    navigation.navigate('Home');
+    close();
   };
 
   const handleUpdateTransaction = async () => {
     await mutateUpdateTransaction({
-      transactionId: paramId,
+      transactionId: paramId as string,
       payload: values,
     });
-    clearRouteData();
-    navigation.navigate('Home');
+    // clearRouteData();
+    close();
   };
 
   const handleDeleteTransaction = async () => {
-    await mutateDeleteTransaction(paramId);
-    clearRouteData();
-    navigation.navigate('Home');
+    await mutateDeleteTransaction();
+    // clearRouteData();
+    close();
   };
 
+  const showDeleteAlert = (onConfirm: () => void) => {
+    Alert.alert('DELETE', 'Are you sure?', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Yes, Delete !',
+        onPress: onConfirm,
+        style: 'default',
+      },
+    ]);
+  };
   return (
-    <ScrollView ref={scrollViewRef}>
-      {singleTransactionLoading ? (
-        <ActivityIndicator />
-      ) : (
-        <>
-          <View style={formStyle.root}>
-            <View style={formStyle.headerContainer}>
-              <Icon name="Type" color={theme.text.exeeria} size="sm" />
-              <Text style={formStyle.header}>Type</Text>
-            </View>
-            <View style={formStyle.transactionType}>
-              <RadioButton.Group
-                onValueChange={handleChange('transactionType')}
-                value={values.transactionType}>
-                <View style={formStyle.typeRadio}>
-                  <RadioButton
-                    value={TransactionType.Expense}
-                    color={theme.text.exeeria}
-                  />
-                  <Text style={formStyle.text}>expense</Text>
-                </View>
-                <View style={formStyle.typeRadio}>
-                  <RadioButton
-                    value={TransactionType.Income}
-                    color={theme.text.exeeria}
-                  />
-                  <Text style={formStyle.text}>income</Text>
-                </View>
-              </RadioButton.Group>
-            </View>
-            {errors.transactionType && errors.transactionType && (
-              <Text style={formStyle.errorText}>{errors.transactionType}</Text>
-            )}
-            <View style={formStyle.headerContainer}>
-              <Icon name="Category" color={theme.text.exeeria} size="sm" />
-              <Text style={formStyle.header}>Category</Text>
-            </View>
-            <TextInput
-              placeholder="Category"
-              style={formStyle.input}
-              onFocus={() => open()}
-              value={values.category}
-              showSoftInputOnFocus={false}
-              onPressOut={() => open()}
-            />
-            <View style={formStyle.headerContainer}>
-              <Icon name="Date" color={theme.text.exeeria} size="sm" />
-              <Text style={formStyle.header}>Date</Text>
-            </View>
-            <TextInput
-              placeholder="DD/MM/YYYY"
-              style={formStyle.input}
-              showSoftInputOnFocus={false}
-              onFocus={showDatePicker}
-              value={values.date.toDateString()}
-            />
-            <DateTimePickerModal
-              isVisible={isDatePickerVisible}
-              mode="date"
-              onConfirm={handleConfirm}
-              onCancel={hideDatePicker}
-            />
-            {errors.date && errors.date && (
-              <Text style={formStyle.errorText}>
-                {errors.date as React.ReactNode}
-              </Text>
-            )}
-            <View style={formStyle.headerContainer}>
-              <Icon name="Description" color={theme.text.exeeria} size="sm" />
-              <Text style={formStyle.header}>Description</Text>
-            </View>
-            <TextInput
-              placeholder="Description"
-              style={formStyle.input}
-              multiline
-              numberOfLines={4}
-              textAlignVertical="top"
-              value={values.description}
-              onChangeText={handleChange('description')}
-            />
-            {errors.description && errors.description && (
-              <Text style={formStyle.errorText}>{errors.description}</Text>
-            )}
-
-            <View style={formStyle.headerContainer}>
-              <Icon name="Amount" color={theme.text.exeeria} size="sm" />
-              <Text style={formStyle.header}>Amount</Text>
+    <>
+      <ScrollView ref={scrollViewRef}>
+        {singleTransactionLoading ? (
+          <View
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: Dimensions.get('window').height,
+            }}>
+            <ActivityIndicator />
+          </View>
+        ) : (
+          <>
+            <View style={formStyle.root}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-around',
+                  marginBottom: 9,
+                }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setFieldValue('transactionType', TransactionType.Expense);
+                  }}
+                  style={{
+                    backgroundColor:
+                      values.transactionType === TransactionType.Expense
+                        ? theme.text.exeeria
+                        : theme.colors.gray,
+                    borderWidth: 1,
+                    borderRadius: 12,
+                    paddingVertical: 12,
+                    paddingHorizontal: 50,
+                    borderColor:
+                      values.transactionType === 'Expense' ? 'white' : 'black',
+                  }}>
+                  <Text
+                    style={{
+                      textAlign: 'center',
+                      fontFamily: fonts.CarosSoftBold,
+                      color:
+                        values.transactionType === TransactionType.Expense
+                          ? 'white'
+                          : 'black',
+                      borderRadius: 8,
+                      fontSize: 16,
+                    }}>
+                    Expense
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    setFieldValue('transactionType', TransactionType.Income);
+                  }}
+                  style={{
+                    backgroundColor:
+                      values.transactionType === TransactionType.Income
+                        ? theme.text.exeeria
+                        : theme.colors.gray,
+                    borderWidth: 1,
+                    padding: 10,
+                    paddingVertical: 12,
+                    borderRadius: 12,
+                    paddingHorizontal: 50,
+                    borderColor:
+                      values.transactionType === 'Income' ? 'white' : 'black',
+                  }}>
+                  <Text
+                    style={{
+                      textAlign: 'center',
+                      fontFamily: fonts.CarosSoftExtraBold,
+                      color:
+                        values.transactionType === 'Income' ? 'white' : 'black',
+                      borderRadius: 8,
+                      fontSize: 16,
+                    }}>
+                    Income
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View style={formStyle.headerContainer}>
+                <Text style={formStyle.header}>Category</Text>
+              </View>
               <TextInput
-                value={values.amount?.toString()}
-                keyboardType="numeric"
-                onChangeText={handleChange('amount')}
-                style={[
-                  formStyle.input,
-                  {
-                    textAlign: 'center',
-                    flex: 1,
-                    marginLeft: 20,
-                  },
-                ]}
+                placeholder="Category"
+                style={formStyle.input}
+                onFocus={() => open()}
+                value={values.category}
+                showSoftInputOnFocus={false}
+                onPressOut={() => open()}
               />
+              <View style={formStyle.headerContainer}>
+                <Icon name="Date" color={theme.text.exeeria} size="sm" />
+                <Text style={formStyle.header}>Date</Text>
+              </View>
+              <TextInput
+                placeholder="DD/MM/YYYY"
+                style={formStyle.input}
+                showSoftInputOnFocus={false}
+                onFocus={() => showDatePicker()}
+                value={values?.date?.toDateString()}
+              />
+              <DateTimePickerModal
+                isVisible={isDatePickerVisible}
+                mode="date"
+                onConfirm={handleConfirm}
+                onCancel={hideDatePicker}
+              />
+              {errors.date && errors.date && (
+                <Text style={formStyle.errorText}>
+                  {errors.date as React.ReactNode}
+                </Text>
+              )}
+              <View style={formStyle.headerContainer}>
+                <Icon name="Description" color={theme.text.exeeria} size="sm" />
+                <Text style={formStyle.header}>Description</Text>
+              </View>
+              <TextInput
+                placeholder="Description"
+                style={formStyle.input}
+                multiline
+                numberOfLines={4}
+                textAlignVertical="top"
+                value={values.description}
+                onChangeText={handleChange('description')}
+              />
+              {errors.description && errors.description && (
+                <Text style={formStyle.errorText}>{errors.description}</Text>
+              )}
+              <View style={formStyle.headerContainer}>
+                <Icon name="Amount" color={theme.text.exeeria} size="sm" />
+                <Text style={formStyle.header}>Amount</Text>
+                <TextInput
+                  value={values.amount?.toString()}
+                  keyboardType="numeric"
+                  onChangeText={handleChange('amount')}
+                  style={[
+                    formStyle.input,
+                    {
+                      textAlign: 'center',
+                      flex: 1,
+                      marginLeft: 20,
+                    },
+                  ]}
+                />
+              </View>
+              {errors.amount && (
+                <Text style={formStyle.errorText}>{errors.amount}</Text>
+              )}
             </View>
-            {errors.amount && (
-              <Text style={formStyle.errorText}>{errors.amount}</Text>
-            )}
 
             {paramId ? (
               <View style={formStyle.btngrp}>
                 <Button
-                  style={formStyle.button}
-                  textColor="white"
-                  onPress={
-                    handleDeleteTransaction
-                    //   async () => {
-                    //   await mutateDeleteTransaction(paramId).then(() =>
-                    //     resetForm({}),
-                    //   );
-                    //   setParamId('');
-                    //   navigation.navigate('Home');
-                    //   Snackbar.show({
-                    //     text: 'Transaction deleted',
-                    //     duration: Snackbar.LENGTH_LONG,
-                    //   });
-                    // }
-                  }>
-                  {deleteTransactionLoading ? 'Deleting' : 'Delete'}
+                  style={formStyle.secondaryButton}
+                  outline
+                  outlineColor={{color: theme.text.exeeria}}
+                  onPress={() => showDeleteAlert(handleDeleteTransaction)}>
+                  <Text>
+                    {deleteTransactionLoading ? 'Deleting' : 'Delete'}
+                  </Text>
                 </Button>
                 <Button
-                  style={formStyle.button}
-                  textColor="white"
-                  onPress={
-                    handleUpdateTransaction
-                    //   async () => {
-                    //   await mutateUpdateTransaction({
-                    //     transactionId: paramId,
-                    //     payload: values,
-                    //   });
-                    //   setParamId('');
-                    //   await navigation.navigate('Home');
-                    //   Snackbar.show({
-                    //     text: 'Transaction updated',
-                    //     duration: Snackbar.LENGTH_LONG,
-                    //   });
-                    // }
-                  }>
-                  {updateTransactionLoading ? 'Updating' : 'Update'}
+                  style={formStyle.primaryButton}
+                  onPress={handleUpdateTransaction}>
+                  <Text style={{color: 'white'}}>
+                    {updateTransactionLoading ? 'Updating...' : 'update'}
+                  </Text>
                 </Button>
               </View>
             ) : (
               <Button
-                style={formStyle.button}
-                textColor="white"
-                onPress={
-                  handleCreateTransaction
-                  //   async () => {
-                  //   if (Object.keys(errors).length > 0) {
-                  //     Snackbar.show({
-                  //       text: JSON.stringify(errors),
-                  //       duration: Snackbar.LENGTH_LONG,
-                  //     });
-                  //     return;
-                  //   }
-                  //   await mutateCreateTransaction(values).then(() => {
-                  //     setParamId('');
-                  //   });
-                  //   Snackbar.show({
-                  //     text: 'Transaction Created',
-                  //     duration: Snackbar.LENGTH_LONG,
-                  //   });
-                  //   setParamId('');
-                  //   navigation.navigate('Home');
-                  // }
-                }
+                style={formStyle.primaryButton}
+                onPress={handleCreateTransaction}
                 disabled={createTransactionLoading}>
-                {createTransactionLoading ? 'Saving...' : '  Save'}
+                <Text style={{color: 'white', fontSize: 20}}>
+                  {createTransactionLoading ? 'Saving...' : 'Save'}
+                </Text>
               </Button>
             )}
-            <View style={{height: 240}} />
-          </View>
-          <Modalize adjustToContentHeight ref={ref}>
-            <View style={formStyle.categoryContainer}>
-              <RadioButton.Group
-                onValueChange={handleChange('category')}
-                value={values.category}>
-                {categories.map((i, index) => (
-                  <View style={formStyle.div} key={index}>
-                    <RadioButton value={i} color={theme.text.exeeria} />
-                    <Text style={formStyle.text}>{i}</Text>
-                  </View>
-                ))}
-              </RadioButton.Group>
-            </View>
-          </Modalize>
-        </>
-      )}
+          </>
+        )}
 
-      {keyboard.keyboardShown && <View style={{height: 1200}} />}
-    </ScrollView>
+        {keyboard.keyboardShown && <View style={{height: 1400}} />}
+      </ScrollView>
+      <Modalize adjustToContentHeight ref={ref}>
+        <View style={formStyle.categoryContainer}>
+          <RadioGroup
+            onValueChange={handleChange('category')}
+            value={values.category}>
+            {values.transactionType === 'Expense' &&
+              expenseCategories.map((i, index) => (
+                <View style={formStyle.div} key={index}>
+                  <RadioButton value={i} color={theme.text.exeeria} />
+                  <Text style={formStyle.text}>{i}</Text>
+                </View>
+              ))}
+            {values.transactionType === 'Income' &&
+              incomeCategories.map((i, index) => (
+                <View style={formStyle.div} key={index}>
+                  <RadioButton value={i} color={theme.text.exeeria} />
+                  <Text style={formStyle.text}>{i}</Text>
+                </View>
+              ))}
+          </RadioGroup>
+        </View>
+      </Modalize>
+    </>
   );
 };
 export default TransactionForm;
@@ -449,13 +415,14 @@ const formStyle = StyleSheet.create({
   transactionType: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 4,
+    margin: 4,
   },
   header: {
     fontFamily: fonts.CarosSoftBold,
-    fontSize: 20,
+    fontSize: 16,
     color: theme.text.header,
     paddingLeft: 8,
+    marginRight: 20,
   },
   headerContainer: {
     flexDirection: 'row',
@@ -485,12 +452,12 @@ const formStyle = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  button: {
+  primaryButton: {
     backgroundColor: theme.text.exeeria,
-    marginTop: 20,
-    paddingVertical: 10,
-    borderRadius: 30,
-    fontSize: 25,
+    marginTop: 12,
+    marginHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 12,
     flex: 1,
   },
   div: {
@@ -501,5 +468,12 @@ const formStyle = StyleSheet.create({
   btngrp: {
     display: 'flex',
     flexDirection: 'row',
+  },
+  secondaryButton: {
+    margin: 15,
+    paddingVertical: 10,
+    borderRadius: 12,
+    fontSize: 25,
+    flex: 1,
   },
 });

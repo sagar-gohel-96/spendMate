@@ -1,6 +1,6 @@
 export type Categories = string[];
 
-export const categories: Categories = [
+export const expenseCategories: Categories = [
   'Housing',
   'Transportation',
   'Food',
@@ -11,5 +11,13 @@ export const categories: Categories = [
   'Education',
   'Savings',
   'GiftsDonation',
+  'Miscellaneous',
+];
+
+export const incomeCategories: Categories = [
+  'Salary',
+  'Investment',
+  'Gitfs',
+  'Personal',
   'Miscellaneous',
 ];

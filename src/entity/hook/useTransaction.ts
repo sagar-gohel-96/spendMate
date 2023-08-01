@@ -3,11 +3,27 @@ import {TransactionService} from '../api/transactions';
 import {useMemo} from 'react';
 import {CreateTransactionPayload, UpdateTransactionPayload} from 'types';
 
-export const useTransaction = (id?: String) => {
+export const useTransaction = (id?: string) => {
   const queryClient = useQueryClient();
+
   const {data, isLoading, refetch} = useQuery('get-transactions', async () => {
+    console.log('inside All transactions');
+
     const res = await TransactionService.getTransactions();
     return res;
+  });
+
+  const {
+    data: singleTransaction,
+    isLoading: singleTransactionLoading,
+    refetch: singleTransactionRefetch,
+  } = useQuery(['get-single-transaction', id], async () => {
+    console.log('inside single transaction', id);
+
+    if (id) {
+      const transaction = await TransactionService.getTransaction(id);
+      return transaction;
+    }
   });
 
   const {
@@ -32,9 +48,11 @@ export const useTransaction = (id?: String) => {
     mutateAsync: mutateDeleteTransaction,
   } = useMutation(
     'delete-transactions',
-    async (transactionId: String) => {
-      const res = await TransactionService.deleteTransaction(transactionId);
-      return res.data;
+    async () => {
+      if (id) {
+        const res = await TransactionService.deleteTransaction(id);
+        return res.data;
+      }
     },
     {
       onSuccess: () => {
@@ -72,25 +90,6 @@ export const useTransaction = (id?: String) => {
   const getTransactions = useMemo(() => {
     return {data, isLoading, refetch};
   }, [data, isLoading, refetch]);
-
-  const {
-    data: singleTransaction,
-    isLoading: singleTransactionLoading,
-    refetch: singleTransactionRefetch,
-  } = useQuery(
-    ['get-single-transaction', id],
-    async () => {
-      if (id) {
-        const transaction = await TransactionService.getTransaction(id);
-        return transaction;
-      }
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({queryKey: ['get-transactions']});
-      },
-    },
-  );
 
   return {
     getTransactions,

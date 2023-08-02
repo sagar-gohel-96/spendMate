@@ -7,8 +7,6 @@ export const useTransaction = (id?: string) => {
   const queryClient = useQueryClient();
 
   const {data, isLoading, refetch} = useQuery('get-transactions', async () => {
-    console.log('inside All transactions');
-
     const res = await TransactionService.getTransactions();
     return res;
   });

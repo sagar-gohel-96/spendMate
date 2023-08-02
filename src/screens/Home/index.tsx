@@ -1,22 +1,31 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {Avatar} from 'react-native-ui-lib';
 import Logo from '../../components/logo';
 import {HomeBanner} from '../../modules/core';
-import TransactionCard from '../../components/card';
+import TransactionList from '../../components/transactionList';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../app/store';
 import {fonts, theme} from '../../utils';
+import {Modalize, useModalize} from 'react-native-modalize';
+import TransactionForm from '../../screens/Transaction/TransactionForm';
 
 const HomeScreen = () => {
+  const [transactionId, setTransactionId] = useState('');
   const {
     user: {user},
   } = useSelector((store: RootState) => store);
 
+  const {ref, close, open} = useModalize();
+
   return (
     <>
-      {/* <ScrollView> */}
-      <View style={homeScreenStyle.rootContainer}>
+      <Modalize ref={ref} adjustToContentHeight>
+        <TransactionForm close={close} id={transactionId} />
+      </Modalize>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={homeScreenStyle.rootContainer}>
         <View style={homeScreenStyle.sectionOne}>
           <Logo />
           <View style={homeScreenStyle.headerContainer}>
@@ -36,9 +45,8 @@ const HomeScreen = () => {
           </View>
         </View>
         <HomeBanner />
-        <TransactionCard />
-      </View>
-      {/* </ScrollView> */}
+        <TransactionList setTransactionId={setTransactionId} open={open} />
+      </ScrollView>
     </>
   );
 };
@@ -47,6 +55,7 @@ export default HomeScreen;
 
 const homeScreenStyle = StyleSheet.create({
   rootContainer: {
+    flex: 1,
     padding: 12,
     paddingTop: 4,
     backgroundColor: theme.colors.white,

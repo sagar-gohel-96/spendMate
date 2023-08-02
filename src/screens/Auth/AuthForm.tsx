@@ -5,7 +5,6 @@ import {Button} from 'react-native-ui-lib';
 import {theme} from '../../utils/theme';
 import {fonts} from '../../utils/fonts';
 import {useKeyboard} from '@react-native-community/hooks';
-import {Icon} from '../../modules/core';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {screenType} from '.';
 
@@ -35,8 +34,10 @@ const AuthForm: React.FC<PropsWithChildren<AuthProps>> = props => {
     isUserLoading,
     onScreenChange,
   } = props;
+
   const keyboard = useKeyboard();
   const scrollViewRef = useRef<ScrollView | null>(null);
+
   useEffect(() => {
     if (keyboard.keyboardShown) {
       scrollViewRef.current?.scrollTo({y: 230, animated: true});
@@ -44,7 +45,7 @@ const AuthForm: React.FC<PropsWithChildren<AuthProps>> = props => {
   }, [keyboard, keyboard.keyboardShown]);
 
   const {handleChange, resetForm, values} = useFormik({
-    initialValues: {email: 'sagar12@gmail.com', password: 'sagar'},
+    initialValues: {email: '', password: ''},
     onSubmit: async (value: SignUpField) => {
       try {
         onSubmit(value, {resetForm});
@@ -53,20 +54,18 @@ const AuthForm: React.FC<PropsWithChildren<AuthProps>> = props => {
       }
     },
   });
+
   return (
-    <ScrollView contentContainerStyle={formStyle.container}>
-      <View style={formStyle.root}>
-        <View style={formStyle.head}>
-          <Icon name="ScreenName" color={theme.text.exeeria} size="lg" />
-          <Text style={formStyle.header}>{screenName?.toUpperCase()}</Text>
+    <ScrollView>
+      <View>
+        <View>
+          <Text>{screenName?.toUpperCase()}</Text>
         </View>
         {screenName === screenType.signup && (
           <View>
-            <View style={formStyle.header}>
-              <Icon name="Name" color={theme.text.exeeria} size="sm" />
-              <Text style={formStyle.text}>Name</Text>
-            </View>
+            <Text>Name</Text>
             <TextInput
+              placeholder="Name"
               value={values.name}
               onChangeText={handleChange('name')}
               style={formStyle.input}
@@ -74,21 +73,15 @@ const AuthForm: React.FC<PropsWithChildren<AuthProps>> = props => {
           </View>
         )}
         <View>
-          <View style={formStyle.header}>
-            <Icon name="Email" color={theme.text.exeeria} size="sm" />
-            <Text style={formStyle.text}>Email</Text>
-          </View>
+          <Text>Email</Text>
           <TextInput
             value={values.email}
             onChangeText={handleChange('email')}
             style={formStyle.input}
           />
         </View>
-        <View>
-          <View style={formStyle.header}>
-            <Icon name="Password" size="sm" />
-            <Text style={formStyle.text}>Password</Text>
-          </View>
+        <View style={formStyle.header}>
+          <Text style={formStyle.text}>Password</Text>
           <TextInput
             value={values.password}
             style={formStyle.input}
@@ -100,7 +93,14 @@ const AuthForm: React.FC<PropsWithChildren<AuthProps>> = props => {
           style={formStyle.button}
           textColor="white"
           onPress={() => onSubmit(values, {resetForm})}>
-          <Text>{isUserLoading ? 'Loading...' : `${buttonText}`}</Text>
+          <Text
+            style={{
+              color: 'white',
+              fontSize: 18,
+              fontFamily: fonts.CarosSoftMedium,
+            }}>
+            {isUserLoading ? 'Loading...' : `${buttonText}`}
+          </Text>
         </Button>
         <TouchableOpacity>
           <Text style={formStyle.loginText} onPress={() => onScreenChange()}>
@@ -116,38 +116,41 @@ export default AuthForm;
 const formStyle = StyleSheet.create({
   form: {flex: 1, borderWidth: 1, justifyContent: 'center'},
   root: {
-    padding: 20,
     width: 300,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: theme.text.exeeria,
+    borderRadius: 12,
   },
   input: {
-    backgroundColor: theme.colors.border,
     marginTop: 8,
-    borderBottomWidth: 2,
+    borderBottomWidth: 1,
     borderBottomColor: theme.text.exeeria,
-    borderRadius: 10,
     fontFamily: fonts.CarosSoftMedium,
-    paddingLeft: 12,
     fontSize: 16,
+    flex: 2,
   },
   header: {
     flexDirection: 'row',
-    textAlign: 'left',
     fontFamily: fonts.CarosSoftMedium,
     color: theme.colors.banner,
     fontSize: 24,
     marginTop: 12,
+    alignItems: 'center',
   },
   button: {
     backgroundColor: theme.text.exeeria,
-    marginTop: 8,
+    marginTop: 16,
     height: 52,
     justifyContent: 'center',
+    borderRadius: 8,
   },
   text: {
     fontFamily: fonts.CarosSoftMedium,
     fontSize: 16,
     color: theme.radioButton.color,
     marginTop: 8,
+    flex: 1,
   },
   container: {
     justifyContent: 'center',

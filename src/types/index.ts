@@ -34,7 +34,7 @@ export interface TransactionSchemaEntity {
   transactionType: TransactionType;
   category: string;
   description: string;
-  amount: number;
+  amount: number | null;
   date: Date;
 }
 

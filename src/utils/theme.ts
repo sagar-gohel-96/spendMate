@@ -5,7 +5,7 @@ export const theme = {
     button: '#74a57f',
     btn: '#4f6d7a',
     text: '#9ece9a',
-    gray: '#adb5bd',
+    gray: '#f8f9fa',
     pink: '#e78bbc',
     blue: '#e6e9f8',
     cream: '#ebc68f',

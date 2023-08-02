@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
@@ -18,15 +17,9 @@ import Snackbar from 'react-native-snackbar';
 import {useSelector} from 'react-redux';
 import {RootState} from 'app/store';
 import {useFormik} from 'formik';
-import {
-  useNavigation,
-  useRoute,
-  RouteProp,
-  useIsFocused,
-} from '@react-navigation/native';
+import {RouteProp} from '@react-navigation/native';
 import {fonts} from '../../utils/fonts';
 import {theme} from '../../utils/theme';
-import {Icon} from '../../modules/core';
 import {expenseCategories, incomeCategories} from '../../utils/categories';
 import {useTransaction} from '../../entity/hook/useTransaction';
 import {transactionValidationSchema} from '../../../validationShema';
@@ -41,9 +34,6 @@ interface TransactionFormProps {
 
 const TransactionForm = (props: TransactionFormProps) => {
   const {close, id} = props;
-  const navigation = useNavigation<any>();
-  const route = useRoute<MyRouteProp>();
-  const isFocused = useIsFocused();
   const {ref, open} = useModalize();
   const keyboard = useKeyboard();
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -76,7 +66,6 @@ const TransactionForm = (props: TransactionFormProps) => {
   const {values, handleChange, resetForm, setFieldValue, errors} = formik;
 
   const formikRef = useRef(formik);
-
   useEffect(() => {
     setParamId(id);
   }, [id]);
@@ -98,7 +87,7 @@ const TransactionForm = (props: TransactionFormProps) => {
         date: new Date(),
         description: '',
         transactionType: TransactionType.Expense,
-        amount: 0,
+        amount: null,
       });
     }
   }, [singleTransaction, user?._id]);
@@ -111,19 +100,8 @@ const TransactionForm = (props: TransactionFormProps) => {
     setFieldValue('category', category);
   }, [setFieldValue, values.transactionType]);
 
-  // const clearRouteData = useCallback(() => {
-  //   resetForm({});
-  //   setParamId('');
-  //   navigation.setParams({id: null});
-  // }, [navigation, resetForm]);
-
   useEffect(() => {
-    // if (!isFocused) {
-    //   clearRouteData();
-    // } else {
-    // setParamId(id ?? '');
     setFormValues();
-    // }
   }, [id, setFormValues]);
 
   useEffect(() => {
@@ -143,6 +121,7 @@ const TransactionForm = (props: TransactionFormProps) => {
   const handleConfirm = (date: Date) => {
     setFieldValue('date', date);
   };
+
   const handleCreateTransaction = async () => {
     if (Object.keys(errors).length > 0) {
       Snackbar.show({
@@ -151,13 +130,12 @@ const TransactionForm = (props: TransactionFormProps) => {
       });
       return;
     }
-    await mutateCreateTransaction(values).then(() => {
-      // clearRouteData();
-    });
+    await mutateCreateTransaction(values);
     Snackbar.show({
       text: 'Transaction Created',
       duration: Snackbar.LENGTH_LONG,
     });
+    resetForm();
     close();
   };
 
@@ -166,13 +144,20 @@ const TransactionForm = (props: TransactionFormProps) => {
       transactionId: paramId as string,
       payload: values,
     });
-    // clearRouteData();
+    Snackbar.show({
+      text: 'Transaction Updated',
+      duration: Snackbar.LENGTH_LONG,
+    });
     close();
   };
 
   const handleDeleteTransaction = async () => {
-    await mutateDeleteTransaction();
-    // clearRouteData();
+    await mutateDeleteTransaction().then(() =>
+      Snackbar.show({
+        text: 'Transaction Deleted',
+        duration: Snackbar.LENGTH_LONG,
+      }),
+    );
     close();
   };
 
@@ -189,6 +174,7 @@ const TransactionForm = (props: TransactionFormProps) => {
       },
     ]);
   };
+
   return (
     <>
       <ScrollView ref={scrollViewRef}>
@@ -221,11 +207,13 @@ const TransactionForm = (props: TransactionFormProps) => {
                         ? theme.text.exeeria
                         : theme.colors.gray,
                     borderWidth: 1,
-                    borderRadius: 12,
                     paddingVertical: 12,
+                    borderRadius: 12,
                     paddingHorizontal: 50,
                     borderColor:
-                      values.transactionType === 'Expense' ? 'white' : 'black',
+                      values.transactionType === 'Expense'
+                        ? 'white'
+                        : theme.text.exeeria,
                   }}>
                   <Text
                     style={{
@@ -234,7 +222,7 @@ const TransactionForm = (props: TransactionFormProps) => {
                       color:
                         values.transactionType === TransactionType.Expense
                           ? 'white'
-                          : 'black',
+                          : theme.text.exeeria,
                       borderRadius: 8,
                       fontSize: 16,
                     }}>
@@ -251,19 +239,22 @@ const TransactionForm = (props: TransactionFormProps) => {
                         ? theme.text.exeeria
                         : theme.colors.gray,
                     borderWidth: 1,
-                    padding: 10,
                     paddingVertical: 12,
                     borderRadius: 12,
                     paddingHorizontal: 50,
                     borderColor:
-                      values.transactionType === 'Income' ? 'white' : 'black',
+                      values.transactionType === 'Income'
+                        ? 'white'
+                        : theme.text.exeeria,
                   }}>
                   <Text
                     style={{
                       textAlign: 'center',
                       fontFamily: fonts.CarosSoftExtraBold,
                       color:
-                        values.transactionType === 'Income' ? 'white' : 'black',
+                        values.transactionType === 'Income'
+                          ? 'white'
+                          : theme.text.exeeria,
                       borderRadius: 8,
                       fontSize: 16,
                     }}>
@@ -273,26 +264,27 @@ const TransactionForm = (props: TransactionFormProps) => {
               </View>
               <View style={formStyle.headerContainer}>
                 <Text style={formStyle.header}>Category</Text>
+                <TextInput
+                  placeholder="Category"
+                  style={formStyle.input}
+                  onFocus={() => open()}
+                  value={values.category}
+                  showSoftInputOnFocus={false}
+                  onPressOut={() => open()}
+                />
               </View>
-              <TextInput
-                placeholder="Category"
-                style={formStyle.input}
-                onFocus={() => open()}
-                value={values.category}
-                showSoftInputOnFocus={false}
-                onPressOut={() => open()}
-              />
+
               <View style={formStyle.headerContainer}>
-                <Icon name="Date" color={theme.text.exeeria} size="sm" />
                 <Text style={formStyle.header}>Date</Text>
+                <TextInput
+                  placeholder="DD/MM/YYYY"
+                  style={formStyle.input}
+                  showSoftInputOnFocus={false}
+                  onFocus={() => showDatePicker()}
+                  value={values?.date?.toDateString()}
+                />
               </View>
-              <TextInput
-                placeholder="DD/MM/YYYY"
-                style={formStyle.input}
-                showSoftInputOnFocus={false}
-                onFocus={() => showDatePicker()}
-                value={values?.date?.toDateString()}
-              />
+
               <DateTimePickerModal
                 isVisible={isDatePickerVisible}
                 mode="date"
@@ -305,32 +297,30 @@ const TransactionForm = (props: TransactionFormProps) => {
                 </Text>
               )}
               <View style={formStyle.headerContainer}>
-                <Icon name="Description" color={theme.text.exeeria} size="sm" />
                 <Text style={formStyle.header}>Description</Text>
+                <TextInput
+                  placeholder="Description"
+                  style={formStyle.input}
+                  textAlignVertical="top"
+                  value={values.description}
+                  onChangeText={handleChange('description')}
+                />
+                {errors.description && errors.description && (
+                  <Text style={formStyle.errorText}>{errors.description}</Text>
+                )}
               </View>
-              <TextInput
-                placeholder="Description"
-                style={formStyle.input}
-                multiline
-                numberOfLines={4}
-                textAlignVertical="top"
-                value={values.description}
-                onChangeText={handleChange('description')}
-              />
-              {errors.description && errors.description && (
-                <Text style={formStyle.errorText}>{errors.description}</Text>
-              )}
+
               <View style={formStyle.headerContainer}>
-                <Icon name="Amount" color={theme.text.exeeria} size="sm" />
                 <Text style={formStyle.header}>Amount</Text>
                 <TextInput
+                  placeholder="0"
                   value={values.amount?.toString()}
                   keyboardType="numeric"
                   onChangeText={handleChange('amount')}
                   style={[
                     formStyle.input,
                     {
-                      textAlign: 'center',
+                      textAlign: 'left',
                       flex: 1,
                       marginLeft: 20,
                     },
@@ -373,7 +363,6 @@ const TransactionForm = (props: TransactionFormProps) => {
             )}
           </>
         )}
-
         {keyboard.keyboardShown && <View style={{height: 1400}} />}
       </ScrollView>
       <Modalize adjustToContentHeight ref={ref}>
@@ -417,41 +406,47 @@ const formStyle = StyleSheet.create({
     alignItems: 'center',
     margin: 4,
   },
+
   header: {
     fontFamily: fonts.CarosSoftBold,
     fontSize: 16,
     color: theme.text.header,
     paddingLeft: 8,
     marginRight: 20,
+    flex: 1,
   },
+
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 16,
   },
+
   text: {
     fontFamily: fonts.CarosSoftMedium,
     fontSize: 16,
     color: theme.radioButton.color,
   },
+
   input: {
-    backgroundColor: theme.colors.border,
     marginTop: 8,
     borderBottomWidth: 2,
     borderBottomColor: theme.text.exeeria,
-    borderRadius: 10,
     fontFamily: fonts.CarosSoftMedium,
     paddingLeft: 12,
+    flex: 2,
     fontSize: 16,
   },
+
   categoryContainer: {
-    padding: 20,
     paddingBottom: 60,
   },
+
   typeRadio: {
     flexDirection: 'row',
     alignItems: 'center',
   },
+
   primaryButton: {
     backgroundColor: theme.text.exeeria,
     marginTop: 12,
@@ -460,20 +455,24 @@ const formStyle = StyleSheet.create({
     borderRadius: 12,
     flex: 1,
   },
+
   div: {
     flexDirection: 'row',
     alignItems: 'center',
   },
+
   errorText: {color: 'red', fontFamily: fonts.CarosSoftMedium},
+
   btngrp: {
     display: 'flex',
     flexDirection: 'row',
   },
+
   secondaryButton: {
-    margin: 15,
-    paddingVertical: 10,
+    marginTop: 12,
+    marginHorizontal: 20,
+    paddingVertical: 12,
     borderRadius: 12,
-    fontSize: 25,
     flex: 1,
   },
 });

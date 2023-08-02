@@ -103,19 +103,6 @@ const MainScreen = () => {
             tabBarLabel: focused => Lable(focused.focused, 'Analytics'),
           }}
         />
-        {/* <Tab.Screen
-        name="Transaction"
-        component={TransactionScreen}
-        options={{
-          tabBarIcon: () => TransactionIcon(),
-          tabBarLabel: () => null,
-          headerLeft: () => LeftArrowIcon(),
-          headerStyle: {
-            borderBottomWidth: 1,
-          },
-        }}
-      /> */}
-
         <Tab.Screen
           name="Transaction"
           component={EmptyScreen}

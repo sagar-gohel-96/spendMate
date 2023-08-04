@@ -1,12 +1,12 @@
 import React, {Dispatch, SetStateAction, useCallback, useEffect} from 'react';
-import {ActivityIndicator, StyleSheet, View} from 'react-native';
-import {Text} from 'react-native';
+import {ActivityIndicator, StyleSheet, View, Text} from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 import {Divider, Icon} from '../../modules/core';
 import {theme} from '../../utils/theme';
 import {fonts} from '../../utils/fonts';
 import {useTransaction} from '../../../src/entity/hook/useTransaction';
 import {getIconStyle} from '../../../src/modules/core/Icon/useIconStyle';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {NoDataImage} from '../../assets/Image';
 import {
   CreateTransactionPayload,
   GetTransactionData,
@@ -15,6 +15,7 @@ import {
 import {currency} from '../../utils';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import {Image} from 'react-native';
 
 dayjs.extend(relativeTime);
 
@@ -51,9 +52,9 @@ const TransactionList = (props: TransactionListProps) => {
     const total = transactions.reduce(
       (acc: number, transaction: CreateTransactionPayload) => {
         if (transaction.transactionType === 'Expense') {
-          return acc - transaction.amount;
+          return acc - (transaction.amount ?? 0);
         } else if (transaction.transactionType === 'Income') {
-          return acc + transaction.amount;
+          return acc + (transaction.amount ?? 0);
         }
         return acc;
       },
@@ -71,34 +72,34 @@ const TransactionList = (props: TransactionListProps) => {
           open();
         }}
         key={item._id}>
-        <View style={cardStyle.transcation}>
+        <View style={s.transcation}>
           <Icon
             name={item.category}
             size="md"
             backgroundColor={style.backgroundColor}
             color={style.color}
           />
-          <View style={cardStyle.section}>
-            <View style={cardStyle.transactionContainer}>
+          <View style={s.section}>
+            <View style={s.transactionContainer}>
               <View style={{flex: 1}}>
-                <Text style={cardStyle.categoryText}>
+                <Text style={s.categoryText}>
                   {item.category.toLocaleUpperCase()}
                 </Text>
                 <Text
                   ellipsizeMode="tail"
                   numberOfLines={1}
-                  style={cardStyle.descriptionText}>
+                  style={s.descriptionText}>
                   {item.description ?? '...'}
                 </Text>
               </View>
               <View style={{flex: 1, justifyContent: 'flex-end'}}>
-                <Text style={cardStyle.amount}>
+                <Text style={s.amount}>
                   {amountString({
-                    amount: item.amount,
+                    amount: item.amount ?? 0,
                     type: item.transactionType,
                   })}
                 </Text>
-                <Text style={cardStyle.descriptionText}>
+                <Text style={s.descriptionText}>
                   {dayjs(item?.createdAt).format('MM MMMM YYYY')}
                 </Text>
               </View>
@@ -111,17 +112,19 @@ const TransactionList = (props: TransactionListProps) => {
 
   return (
     <>
-      <View style={cardStyle.container}>
-        <View style={cardStyle.headContainer}>
-          <Text style={cardStyle.headText}>Transactions</Text>
-          <Text style={cardStyle.headText}>{calculateTotalAmount()}</Text>
+      <View style={s.root}>
+        <View style={s.title}>
+          <Text style={s.headText}>Transactions</Text>
+          <Text style={s.headText}>{calculateTotalAmount()}</Text>
         </View>
         <Divider marginVertical={10} />
-        {isLoading ? (
-          <ActivityIndicator />
+        {isLoading && <ActivityIndicator />}
+        {getTransactions?.data?.data?.length > 0 ? (
+          getTransactions?.data?.data.map((item: GetTransactionData) =>
+            renderItem({item}),
+          )
         ) : (
-          // <FlatList data={getTransactions?.data.data} renderItem={renderItem} />
-          <>{getTransactions?.data.data.map(item => renderItem({item}))}</>
+          <Image source={NoDataImage} style={s.image} />
         )}
       </View>
     </>
@@ -130,8 +133,8 @@ const TransactionList = (props: TransactionListProps) => {
 
 export default TransactionList;
 
-const cardStyle = StyleSheet.create({
-  container: {
+const s = StyleSheet.create({
+  root: {
     borderRadius: 10,
     borderWidth: 2,
     padding: 10,
@@ -139,7 +142,7 @@ const cardStyle = StyleSheet.create({
     borderColor: theme.colors.border,
     width: '100%',
   },
-  headContainer: {
+  title: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginVertical: 4,
@@ -173,6 +176,7 @@ const cardStyle = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-start',
     marginVertical: 12,
+    flex: 1,
   },
   section: {
     marginHorizontal: 10,
@@ -181,5 +185,12 @@ const cardStyle = StyleSheet.create({
   emptyData: {
     fontFamily: fonts.CarosSoftMedium,
     textAlign: 'center',
+  },
+  image: {
+    flex: 1,
+    height: 200,
+    resizeMode: 'contain',
+    aspectRatio: 1,
+    alignSelf: 'center',
   },
 });

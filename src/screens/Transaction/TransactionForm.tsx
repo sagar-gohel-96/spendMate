@@ -6,10 +6,9 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from 'react-native';
-import {Button, RadioButton, RadioGroup} from 'react-native-ui-lib';
+import {RadioButton, RadioGroup, TextField} from 'react-native-ui-lib';
 import {useKeyboard} from '@react-native-community/hooks';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {Modalize, useModalize} from 'react-native-modalize';
@@ -25,6 +24,8 @@ import {useTransaction} from '../../entity/hook/useTransaction';
 import {transactionValidationSchema} from '../../../validationShema';
 import {CreateTransactionPayload, TransactionType} from '../../types';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {List, Calendar, FileText, CurrencyInr} from 'phosphor-react-native';
+import {X} from 'phosphor-react-native';
 
 export type MyRouteProp = RouteProp<Record<string, {id?: string}>>;
 interface TransactionFormProps {
@@ -34,10 +35,11 @@ interface TransactionFormProps {
 
 const TransactionForm = (props: TransactionFormProps) => {
   const {close, id} = props;
-  const {ref, open} = useModalize();
+  const [paramId, setParamId] = useState(id);
+  const {ref, open, close: closeCategorySheet} = useModalize();
   const keyboard = useKeyboard();
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const [paramId, setParamId] = useState(id);
+  const [styleType, setStyleType] = useState(false);
   const scrollViewRef = useRef<ScrollView | null>(null);
 
   const {
@@ -54,8 +56,6 @@ const TransactionForm = (props: TransactionFormProps) => {
     updateTransactionLoading,
     deleteTransactionLoading,
   } = useTransaction(paramId);
-
-  console.log(singleTransaction, 'aaa');
 
   const formik = useFormik({
     initialValues: {} as CreateTransactionPayload,
@@ -139,6 +139,10 @@ const TransactionForm = (props: TransactionFormProps) => {
     close();
   };
 
+  const handleCancelTransaction = () => {
+    close();
+  };
+
   const handleUpdateTransaction = async () => {
     await mutateUpdateTransaction({
       transactionId: paramId as string,
@@ -179,209 +183,167 @@ const TransactionForm = (props: TransactionFormProps) => {
     <>
       <ScrollView ref={scrollViewRef}>
         {singleTransactionLoading ? (
-          <View
-            style={{
-              flex: 1,
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: Dimensions.get('window').height,
-            }}>
+          <View style={s.loadingWrapper}>
             <ActivityIndicator />
           </View>
         ) : (
           <>
-            <View style={formStyle.root}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-around',
-                  marginBottom: 9,
-                }}>
+            <View style={s.root}>
+              <View style={s.tabWrapper}>
                 <TouchableOpacity
                   onPress={() => {
                     setFieldValue('transactionType', TransactionType.Expense);
+                    setStyleType(!styleType);
                   }}
-                  style={{
-                    backgroundColor:
-                      values.transactionType === TransactionType.Expense
-                        ? theme.text.exeeria
-                        : theme.colors.gray,
-                    borderWidth: 1,
-                    paddingVertical: 12,
-                    borderRadius: 12,
-                    paddingHorizontal: 50,
-                    borderColor:
-                      values.transactionType === 'Expense'
-                        ? 'white'
-                        : theme.text.exeeria,
-                  }}>
-                  <Text
-                    style={{
-                      textAlign: 'center',
-                      fontFamily: fonts.CarosSoftBold,
-                      color:
-                        values.transactionType === TransactionType.Expense
-                          ? 'white'
-                          : theme.text.exeeria,
-                      borderRadius: 8,
-                      fontSize: 16,
-                    }}>
+                  style={styleType ? s.activeTab : s.inActiveTab}>
+                  <Text style={styleType ? s.activeTabText : s.inActiveTabText}>
                     Expense
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {
                     setFieldValue('transactionType', TransactionType.Income);
+                    setStyleType(!styleType);
                   }}
-                  style={{
-                    backgroundColor:
-                      values.transactionType === TransactionType.Income
-                        ? theme.text.exeeria
-                        : theme.colors.gray,
-                    borderWidth: 1,
-                    paddingVertical: 12,
-                    borderRadius: 12,
-                    paddingHorizontal: 50,
-                    borderColor:
-                      values.transactionType === 'Income'
-                        ? 'white'
-                        : theme.text.exeeria,
-                  }}>
+                  style={!styleType ? s.activeTab : s.inActiveTab}>
                   <Text
-                    style={{
-                      textAlign: 'center',
-                      fontFamily: fonts.CarosSoftExtraBold,
-                      color:
-                        values.transactionType === 'Income'
-                          ? 'white'
-                          : theme.text.exeeria,
-                      borderRadius: 8,
-                      fontSize: 16,
-                    }}>
+                    style={!styleType ? s.activeTabText : s.inActiveTabText}>
                     Income
                   </Text>
                 </TouchableOpacity>
               </View>
-              <View style={formStyle.headerContainer}>
-                <Text style={formStyle.header}>Category</Text>
-                <TextInput
-                  placeholder="Category"
-                  style={formStyle.input}
-                  onFocus={() => open()}
-                  value={values.category}
-                  showSoftInputOnFocus={false}
-                  onPressOut={() => open()}
-                />
-              </View>
+              <View style={s.form}>
+                <View style={s.formInputWrapper}>
+                  <List size={32} color={theme.icon.primary} />
+                  <View style={s.formInputContent}>
+                    <TextField
+                      placeholder="category"
+                      style={s.formInput}
+                      onFocus={() => open()}
+                      value={values.category}
+                      showSoftInputOnFocus={false}
+                      onPressOut={() => open()}
+                    />
+                  </View>
+                </View>
 
-              <View style={formStyle.headerContainer}>
-                <Text style={formStyle.header}>Date</Text>
-                <TextInput
-                  placeholder="DD/MM/YYYY"
-                  style={formStyle.input}
-                  showSoftInputOnFocus={false}
-                  onFocus={() => showDatePicker()}
-                  value={values?.date?.toDateString()}
-                />
-              </View>
+                <View style={s.formInputWrapper}>
+                  <Calendar size={32} color={theme.icon.primary} />
+                  <View style={s.formInputContent}>
+                    <TextField
+                      placeholder="DD/MM/YYYY"
+                      style={s.formInput}
+                      showSoftInputOnFocus={false}
+                      onFocus={() => showDatePicker()}
+                      value={values?.date?.toDateString()}
+                    />
+                  </View>
+                </View>
 
+                <View style={s.formInputWrapper}>
+                  <FileText size={32} color={theme.icon.primary} />
+                  <View style={s.formInputContent}>
+                    <TextField
+                      placeholder="Description"
+                      style={s.formInput}
+                      value={values.description}
+                      onChangeText={handleChange('description')}
+                    />
+                  </View>
+                </View>
+
+                <View style={s.formInputWrapper}>
+                  <CurrencyInr size={32} color={theme.icon.primary} />
+                  <View style={s.formInputContent}>
+                    <TextField
+                      placeholder="0"
+                      value={values.amount?.toString()}
+                      keyboardType="numeric"
+                      onChangeText={handleChange('amount')}
+                      style={s.formInput}
+                    />
+                  </View>
+                </View>
+              </View>
               <DateTimePickerModal
                 isVisible={isDatePickerVisible}
                 mode="date"
                 onConfirm={handleConfirm}
                 onCancel={hideDatePicker}
               />
-              {errors.date && errors.date && (
-                <Text style={formStyle.errorText}>
-                  {errors.date as React.ReactNode}
-                </Text>
-              )}
-              <View style={formStyle.headerContainer}>
-                <Text style={formStyle.header}>Description</Text>
-                <TextInput
-                  placeholder="Description"
-                  style={formStyle.input}
-                  textAlignVertical="top"
-                  value={values.description}
-                  onChangeText={handleChange('description')}
-                />
-                {errors.description && errors.description && (
-                  <Text style={formStyle.errorText}>{errors.description}</Text>
-                )}
-              </View>
-
-              <View style={formStyle.headerContainer}>
-                <Text style={formStyle.header}>Amount</Text>
-                <TextInput
-                  placeholder="0"
-                  value={values.amount?.toString()}
-                  keyboardType="numeric"
-                  onChangeText={handleChange('amount')}
-                  style={[
-                    formStyle.input,
-                    {
-                      textAlign: 'left',
-                      flex: 1,
-                      marginLeft: 20,
-                    },
-                  ]}
-                />
-              </View>
-              {errors.amount && (
-                <Text style={formStyle.errorText}>{errors.amount}</Text>
+              {paramId ? (
+                <View style={s.btngrp}>
+                  <View style={s.secondaryButton}>
+                    <TouchableOpacity
+                      activeOpacity={0.8}
+                      onPress={() => showDeleteAlert(handleDeleteTransaction)}
+                      disabled={deleteTransactionLoading}>
+                      <Text style={s.secondaryButtonText}>
+                        {deleteTransactionLoading ? 'Deleting' : 'Delete'}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                  <View style={s.primaryButton}>
+                    <TouchableOpacity
+                      activeOpacity={0.8}
+                      onPress={handleUpdateTransaction}
+                      disabled={updateTransactionLoading}>
+                      <Text style={s.buttonText}>
+                        {updateTransactionLoading ? 'Updating...' : 'Update'}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ) : (
+                <View style={s.btngrp}>
+                  <View style={s.secondaryButton}>
+                    <TouchableOpacity
+                      activeOpacity={0.8}
+                      onPress={handleCancelTransaction}>
+                      <Text style={s.secondaryButtonText}>Cancel</Text>
+                    </TouchableOpacity>
+                  </View>
+                  <View style={s.primaryButton}>
+                    <TouchableOpacity
+                      activeOpacity={0.8}
+                      onPress={handleCreateTransaction}
+                      disabled={createTransactionLoading}>
+                      <Text style={s.buttonText}>
+                        {createTransactionLoading ? 'Saving...' : 'Save'}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
               )}
             </View>
-
-            {paramId ? (
-              <View style={formStyle.btngrp}>
-                <Button
-                  style={formStyle.secondaryButton}
-                  outline
-                  outlineColor={{color: theme.text.exeeria}}
-                  onPress={() => showDeleteAlert(handleDeleteTransaction)}>
-                  <Text>
-                    {deleteTransactionLoading ? 'Deleting' : 'Delete'}
-                  </Text>
-                </Button>
-                <Button
-                  style={formStyle.primaryButton}
-                  onPress={handleUpdateTransaction}>
-                  <Text style={{color: 'white'}}>
-                    {updateTransactionLoading ? 'Updating...' : 'update'}
-                  </Text>
-                </Button>
-              </View>
-            ) : (
-              <Button
-                style={formStyle.primaryButton}
-                onPress={handleCreateTransaction}
-                disabled={createTransactionLoading}>
-                <Text style={{color: 'white', fontSize: 20}}>
-                  {createTransactionLoading ? 'Saving...' : 'Save'}
-                </Text>
-              </Button>
-            )}
           </>
         )}
         {keyboard.keyboardShown && <View style={{height: 1400}} />}
       </ScrollView>
       <Modalize adjustToContentHeight ref={ref}>
-        <View style={formStyle.categoryContainer}>
+        <TouchableOpacity
+          onPress={() => closeCategorySheet()}
+          style={s.cancelWrapper}
+          hitSlop={0.3}>
+          <X weight="fill" size={28} color="white" />
+        </TouchableOpacity>
+        <View style={s.categoryWrapper}>
           <RadioGroup
             onValueChange={handleChange('category')}
-            value={values.category}>
+            value={values.category}
+            style={s.radioGroup}>
             {values.transactionType === 'Expense' &&
               expenseCategories.map((i, index) => (
-                <View style={formStyle.div} key={index}>
-                  <RadioButton value={i} color={theme.text.exeeria} />
-                  <Text style={formStyle.text}>{i}</Text>
+                <View style={s.categoryContent} key={index}>
+                  <RadioButton value={i} />
+                  <Text style={s.categoryText}>{i}</Text>
                 </View>
               ))}
             {values.transactionType === 'Income' &&
               incomeCategories.map((i, index) => (
-                <View style={formStyle.div} key={index}>
-                  <RadioButton value={i} color={theme.text.exeeria} />
-                  <Text style={formStyle.text}>{i}</Text>
+                <View style={s.categoryContent} key={index}>
+                  <RadioButton value={i} />
+                  <Text style={s.categoryText}>{i}</Text>
                 </View>
               ))}
           </RadioGroup>
@@ -392,8 +354,52 @@ const TransactionForm = (props: TransactionFormProps) => {
 };
 export default TransactionForm;
 
-const formStyle = StyleSheet.create({
+const s = StyleSheet.create({
+  tabWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 15,
+  },
+  inActiveTab: {
+    borderBottomWidth: 2,
+    paddingVertical: 12,
+    paddingHorizontal: 50,
+    borderBottomColor: theme.button.color,
+  },
+  activeTabText: {
+    textAlign: 'center',
+    fontFamily: fonts.CarosSoftBold,
+    color: theme.icon.primary,
+    fontSize: 16,
+  },
+  activeTab: {
+    borderBottomWidth: 2,
+    paddingVertical: 12,
+    paddingHorizontal: 50,
+    borderBottomColor: theme.icon.primary,
+  },
+  inActiveTabText: {
+    textAlign: 'center',
+    fontFamily: fonts.CarosSoftMedium,
+    color: theme.button.color,
+    fontSize: 16,
+  },
   root: {padding: 18},
+  cancelWrapper: {
+    marginRight: 10,
+    marginTop: 10,
+    padding: 8,
+    alignItems: 'flex-end',
+    alignSelf: 'flex-end',
+    backgroundColor: '#e7e7e7',
+    borderRadius: 50,
+  },
+  loadingWrapper: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: Dimensions.get('window').height,
+  },
   banner: {
     fontFamily: fonts.CarosSoftBold,
     fontSize: 24,
@@ -422,10 +428,9 @@ const formStyle = StyleSheet.create({
     marginTop: 16,
   },
 
-  text: {
+  categoryText: {
     fontFamily: fonts.CarosSoftMedium,
-    fontSize: 16,
-    color: theme.radioButton.color,
+    fontSize: 20,
   },
 
   input: {
@@ -438,8 +443,8 @@ const formStyle = StyleSheet.create({
     fontSize: 16,
   },
 
-  categoryContainer: {
-    paddingBottom: 60,
+  categoryWrapper: {
+    padding: 20,
   },
 
   typeRadio: {
@@ -447,32 +452,62 @@ const formStyle = StyleSheet.create({
     alignItems: 'center',
   },
 
-  primaryButton: {
-    backgroundColor: theme.text.exeeria,
-    marginTop: 12,
-    marginHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 12,
-    flex: 1,
-  },
-
-  div: {
+  categoryContent: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 20,
+  },
+  radioGroup: {
+    gap: 10,
   },
 
   errorText: {color: 'red', fontFamily: fonts.CarosSoftMedium},
 
-  btngrp: {
-    display: 'flex',
-    flexDirection: 'row',
+  buttonText: {
+    fontSize: 14,
+    fontFamily: fonts.CarosSoftMedium,
+    color: theme.button.text,
+    textAlign: 'center',
   },
 
-  secondaryButton: {
-    marginTop: 12,
-    marginHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 12,
+  btngrp: {
+    flexDirection: 'row',
+    gap: 20,
+    marginVertical: 20,
+  },
+
+  primaryButton: {
+    backgroundColor: theme.button.color,
+    borderRadius: 10,
+    padding: 14,
     flex: 1,
+  },
+  secondaryButton: {
+    borderRadius: 10,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: theme.button.color,
+    flex: 1,
+  },
+  secondaryButtonText: {
+    color: theme.button.color,
+    fontSize: 14,
+    fontFamily: fonts.CarosSoftMedium,
+    textAlign: 'center',
+  },
+  form: {gap: 10},
+  formInputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 15,
+  },
+  formInputContent: {flex: 1},
+  formInput: {
+    borderBottomWidth: 1,
+    borderBottomColor: theme.input.bottomBorder,
+    paddingHorizontal: 5,
+    height: 50,
+    fontSize: 16,
+    fontFamily: fonts.CarosSoftMedium,
   },
 });

@@ -2,7 +2,7 @@ import React, {useCallback} from 'react';
 import {Image, StyleSheet} from 'react-native';
 import {View} from 'react-native';
 import {Text} from 'react-native';
-import {banner} from '../../../assets/Image';
+import {BannerImage} from '../../../assets/Image';
 import {fonts} from '../../../utils/fonts';
 import {theme} from '../../../utils/theme';
 import {useTransaction} from '../../../entity/hook/useTransaction';
@@ -85,7 +85,7 @@ const HomeBanner = () => {
         </View>
       </View>
       <View style={bannerContainer}>
-        <Image source={banner} style={bannerImage} />
+        <Image source={BannerImage} style={bannerImage} />
       </View>
     </View>
   );

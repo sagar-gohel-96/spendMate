@@ -1,7 +1,7 @@
 import React, {useCallback} from 'react';
 import {Dimensions} from 'react-native';
 import {Image, StyleSheet, Text, View} from 'react-native';
-import {landing} from '../../assets/Image';
+import {LandingImage} from '../../assets/Image';
 import {fonts} from '../../utils/fonts';
 import {theme} from '../../utils/theme';
 import {setUser} from '../../features/user/userSlice';
@@ -19,7 +19,6 @@ const LandingScreen = () => {
 
   const fetchUser = useCallback(async () => {
     const token = await AsyncStorage.getItem('token');
-    console.log(token, 'token ');
     if (!token) {
       navigation.navigate('AuthScreen' as never);
     } else {
@@ -45,7 +44,7 @@ const LandingScreen = () => {
             <Icon name="chevron-right" color="white" />
           </View>
         </View>
-        <Image source={landing} style={landingScreenStyle.landingImg} />
+        <Image source={LandingImage} style={landingScreenStyle.landingImg} />
         <Text style={landingScreenStyle.goal}>
           Track every penny and take control of your finances with us.
         </Text>

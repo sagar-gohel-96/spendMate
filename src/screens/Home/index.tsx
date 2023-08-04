@@ -23,13 +23,11 @@ const HomeScreen = () => {
       <Modalize ref={ref} adjustToContentHeight>
         <TransactionForm close={close} id={transactionId} />
       </Modalize>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        style={homeScreenStyle.rootContainer}>
-        <View style={homeScreenStyle.sectionOne}>
+      <ScrollView showsVerticalScrollIndicator={false} style={s.rootContainer}>
+        <View style={s.headerWrapper}>
           <Logo />
-          <View style={homeScreenStyle.headerContainer}>
-            <View style={homeScreenStyle.avatar}>
+          <View style={s.profileWrapper}>
+            <View style={s.avatar}>
               <Avatar
                 size={40}
                 label={user ? user?.name.charAt(0).toUpperCase() : 'G'}
@@ -37,15 +35,21 @@ const HomeScreen = () => {
               />
             </View>
             <View>
-              <Text style={homeScreenStyle.secondaryText}>
+              <Text style={s.secondaryText}>
                 {user ? user.name : 'Guest User'}
               </Text>
-              <Text style={homeScreenStyle.primaryText}>Morning</Text>
+              <Text style={s.primaryText}>Morning</Text>
             </View>
           </View>
         </View>
-        <HomeBanner />
-        <TransactionList setTransactionId={setTransactionId} open={open} />
+
+        <View>
+          <HomeBanner />
+        </View>
+
+        <View style={s.transactionWrapper}>
+          <TransactionList setTransactionId={setTransactionId} open={open} />
+        </View>
       </ScrollView>
     </>
   );
@@ -53,14 +57,12 @@ const HomeScreen = () => {
 
 export default HomeScreen;
 
-const homeScreenStyle = StyleSheet.create({
+const s = StyleSheet.create({
   rootContainer: {
-    flex: 1,
     padding: 12,
-    paddingTop: 4,
     backgroundColor: theme.colors.white,
   },
-  headerContainer: {
+  profileWrapper: {
     marginLeft: 8,
     flexDirection: 'row',
   },
@@ -85,12 +87,14 @@ const homeScreenStyle = StyleSheet.create({
     height: 40,
     justifyContent: 'center',
   },
-  sectionOne: {
+  headerWrapper: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    margin: 8,
   },
   avatar: {
     marginRight: 10,
+  },
+  transactionWrapper: {
+    flex: 1,
   },
 });

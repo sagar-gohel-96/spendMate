@@ -1,72 +1,51 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import HomeScreen from '../../screens/Home';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {theme} from '../../utils/theme';
 import ProfileScreen from '../../screens/Profile';
-import {Text, TouchableOpacity, View} from 'react-native';
+import {TouchableOpacity, View} from 'react-native';
 import AnalyticsScreen from '../../screens/Analytics';
-import {StyleSheet} from 'react-native';
-import {fonts} from '../../utils/fonts';
 import NotificationScreen from '../../screens/Notification';
 import {Modalize, useModalize} from 'react-native-modalize';
 import TransactionForm from '../../screens/Transaction/TransactionForm';
+import {House, UserCircle, ChartBar, Bell, Plus} from 'phosphor-react-native';
 
 const Tab = createBottomTabNavigator();
+const IconSize = 36;
 
 const HomeIcon = (focused: boolean) => (
-  <Icon
-    name="home"
-    size={30}
-    color={focused ? theme.text.exeeria : theme.colors.gray}
+  <House
+    size={IconSize}
+    weight={focused ? 'fill' : 'regular'}
+    color="#99d98c"
   />
 );
 const ProfileIcon = (focused: boolean) => (
-  <Icon
-    name="account"
-    size={30}
-    color={focused ? theme.text.exeeria : theme.colors.gray}
+  <UserCircle
+    size={IconSize}
+    weight={focused ? 'fill' : 'regular'}
+    color="#a2d2ff"
   />
 );
 const AnalyticsIcon = (focused: boolean) => (
-  <Icon
-    name="poll"
-    size={30}
-    color={focused ? theme.text.exeeria : theme.colors.gray}
+  <ChartBar
+    size={IconSize}
+    weight={focused ? 'fill' : 'regular'}
+    color="#f5ee9e"
   />
 );
-
 const NotificationIcon = (focused: boolean) => (
-  <Icon
-    name="bell"
-    size={30}
-    color={focused ? theme.text.exeeria : theme.colors.gray}
-  />
+  <Bell size={IconSize} weight={focused ? 'fill' : 'regular'} color="#084b83" />
 );
-const TransactionIcon = (props: {
-  open: (dest?: 'top' | 'default' | undefined) => void;
-}) => {
-  return (
-    <View>
-      <TouchableOpacity
-        onPress={() => {
-          props.open();
-        }}>
-        <Icon
-          name="plus"
-          size={40}
-          style={tabTextStyle.addTransaction}
-          color={theme.colors.white}
-        />
-      </TouchableOpacity>
-    </View>
-  );
-};
 
-const Lable = (focused: boolean, value: string) => (
-  <Text style={[focused && tabTextStyle.focused, tabTextStyle.label]}>
-    {value}
-  </Text>
+const TransactionIcon = (open, focused: boolean) => (
+  <View>
+    <TouchableOpacity
+      onPress={() => {
+        open();
+      }}>
+      <Plus size={IconSize} weight={focused ? 'fill' : 'regular'} />
+    </TouchableOpacity>
+  </View>
 );
 
 const EmptyScreen = () => null;
@@ -83,7 +62,7 @@ const MainScreen = () => {
         initialRouteName="LandingScreen"
         screenOptions={{
           tabBarStyle: {
-            paddingBottom: 4,
+            height: 70,
           },
         }}>
         <Tab.Screen
@@ -91,7 +70,7 @@ const MainScreen = () => {
           component={HomeScreen}
           options={{
             tabBarIcon: ({focused}) => HomeIcon(focused),
-            tabBarLabel: focused => Lable(focused.focused, 'Home'),
+            tabBarShowLabel: false,
             headerShown: false,
           }}
         />
@@ -100,20 +79,24 @@ const MainScreen = () => {
           component={AnalyticsScreen}
           options={{
             tabBarIcon: ({focused}) => AnalyticsIcon(focused),
-            tabBarLabel: focused => Lable(focused.focused, 'Analytics'),
+            tabBarShowLabel: false,
+            headerShown: false,
           }}
         />
         <Tab.Screen
           name="Transaction"
           component={EmptyScreen}
-          options={{tabBarButton: () => <TransactionIcon open={open} />}}
+          options={{
+            tabBarIcon: ({focused}) => TransactionIcon(open, focused),
+          }}
         />
         <Tab.Screen
           name="Notification"
           component={NotificationScreen}
           options={{
             tabBarIcon: ({focused}) => NotificationIcon(focused),
-            tabBarLabel: focused => Lable(focused.focused, 'Notification'),
+            tabBarShowLabel: false,
+            headerShown: false,
           }}
         />
         <Tab.Screen
@@ -121,7 +104,8 @@ const MainScreen = () => {
           component={ProfileScreen}
           options={{
             tabBarIcon: ({focused}) => ProfileIcon(focused),
-            tabBarLabel: focused => Lable(focused.focused, 'Profile'),
+            tabBarShowLabel: false,
+            headerShown: false,
           }}
         />
       </Tab.Navigator>
@@ -130,13 +114,3 @@ const MainScreen = () => {
 };
 
 export default MainScreen;
-const tabTextStyle = StyleSheet.create({
-  label: {
-    fontFamily: fonts.CarosSoftBold,
-    fontSize: 12,
-  },
-  focused: {
-    color: theme.text.exeeria,
-  },
-  addTransaction: {backgroundColor: theme.text.exeeria, borderRadius: 8},
-});

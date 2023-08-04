@@ -16,11 +16,10 @@ export const theme = {
     border: '#f5f3f4',
   },
   icon: {
-    100: '#fae6e7',
-    200: '#d96363',
+    primary: '#adb5bd',
   },
   text: {
-    primary: '#080d33',
+    primary: '#2b2d42',
     secondary: '#4f5673',
     header: '#161b40',
     description: '#a1a2b2',
@@ -34,5 +33,6 @@ export const theme = {
   radioButton: {
     color: '#66c2db',
   },
-  input: {color: '#caf0f8'},
+  input: {color: '#caf0f8', text: '#adb5bd', bottomBorder: '#8d99ae'},
+  button: {text: '#ffffff', color: '#2196f3'},
 };

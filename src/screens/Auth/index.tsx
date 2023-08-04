@@ -16,16 +16,22 @@ export enum screenType {
 
 const AuthScreen = () => {
   const [screen, setScreen] = useState<screenType>(screenType.login);
-
   const navigation = useNavigation();
   const route = useRoute<any>();
+
   useEffect(() => {
     if (route?.params?.type) {
       setScreen(route.params.type);
     }
   }, [route?.params?.type]);
-  const {loginUserMutate, signupUserMutate, getUser, loginUserIsLoading} =
-    useUser();
+
+  const {
+    loginUserMutate,
+    signupUserMutate,
+    getUser,
+    loginUserIsLoading,
+    signupUserIsLoading,
+  } = useUser();
   const dispatch = useDispatch();
 
   const handleSignup = useCallback(
@@ -38,7 +44,6 @@ const AuthScreen = () => {
 
           const userData = await getUser.refetch();
           dispatch(setUser(userData.data));
-
           Snackbar.show({
             text: 'Account created',
             duration: Snackbar.LENGTH_LONG,
@@ -96,14 +101,14 @@ const AuthScreen = () => {
       {screen === screenType.signup ? (
         <AuthForm
           initialValues={{email: '', password: ''}}
-          buttonText="Save"
+          buttonText="Register"
           screenName={screenType.signup}
-          bottomText="Already Have An Account? Log IN"
+          bottomText="Already Have An Account? Log In"
           onScreenChange={() => setScreen(screenType.login)}
           onSubmit={(value, {resetForm}) =>
             handleSignup(value as CreateUserPayload, {resetForm})
           }
-          isUserLoading={loginUserIsLoading}
+          isUserLoading={signupUserIsLoading}
         />
       ) : (
         <AuthForm

@@ -1,157 +1,225 @@
+import React, {PropsWithChildren, useMemo} from 'react';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
+import {fonts, theme} from '../../utils';
+import {TextField} from 'react-native-ui-lib';
+import {At, User, Keyhole} from 'phosphor-react-native';
+import {LogInImage, SignUpImage} from '../../assets/Image/index';
 import {useFormik} from 'formik';
-import React, {PropsWithChildren, useEffect, useRef} from 'react';
-import {Text, View, TextInput, StyleSheet, ScrollView} from 'react-native';
-import {Button} from 'react-native-paper';
-import {theme} from '../../utils/theme';
-import {fonts} from '../../utils/fonts';
-import {useKeyboard} from '@react-native-community/hooks';
-import {Icon} from '../../modules/core';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {screenType} from './index';
+import {
+  signUpValidationSchema,
+  logInValidationSchema,
+} from '../../../validationShema/index';
 
 interface AuthProps {
   screenName: string;
   buttonText: string;
-  onPress: (event: UIEvent) => void;
+  onScreenChange: () => void;
   initialValues: SignUpField;
   setScreen?: (value: any) => void;
-  bottomText: String;
+  bottomText: string;
+  onSubmit: (value: SignUpField, {resetForm}: any) => void;
+  isUserLoading: boolean;
 }
 
 type SignUpField = {
+  name?: string;
   email: string;
-  name: string;
   password: string;
 };
 
 const AuthForm: React.FC<PropsWithChildren<AuthProps>> = props => {
-  const {screenName, initialValues, buttonText, bottomText, onPress} = props;
-  const keyboard = useKeyboard();
-  const scrollViewRef = useRef<ScrollView | null>(null);
+  const {
+    screenName,
+    buttonText,
+    bottomText,
+    onSubmit: handleFormSubmit,
+    onScreenChange,
+    isUserLoading,
+  } = props;
 
-  useEffect(() => {
-    if (keyboard.keyboardShown) {
-      scrollViewRef.current?.scrollTo({y: 230, animated: true});
+  const intialValue = useMemo(() => {
+    if (screenName === screenType.login) {
+      return {email: '', password: ''};
     }
-  }, [keyboard, keyboard.keyboardShown]);
+    return {name: '', email: '', password: ''};
+  }, [screenName]);
 
-  const {handleChange, handleSubmit, values} = useFormik({
-    initialValues: initialValues,
-    onSubmit: (value, {resetForm}) => {
-      resetForm({});
+  const {
+    handleChange,
+    resetForm,
+    values,
+    errors,
+    dirty,
+    handleBlur,
+    touched,
+    handleSubmit,
+  } = useFormik({
+    initialValues: intialValue,
+    validationSchema:
+      screenName === screenType.signup
+        ? signUpValidationSchema
+        : logInValidationSchema,
+    onSubmit: async (value: SignUpField) => {
+      try {
+        handleFormSubmit(value, {resetForm});
+      } catch (error) {
+        console.log(error);
+      }
     },
   });
+
+  const disableButton = !(dirty && Object.keys(errors).length === 0);
   return (
-    <ScrollView contentContainerStyle={formStyle.container}>
-      <View style={formStyle.root}>
-        <View style={formStyle.head}>
-          <Icon name="account-lock-open" color={theme.text.exeeria} size="lg" />
-          <Text style={formStyle.header}>{screenName}</Text>
-        </View>
-        <View>
-          <View style={formStyle.header}>
-            <Icon name="rename-box" color={theme.text.exeeria} size="sm" />
-            <Text style={formStyle.text}>Name</Text>
+    <ScrollView style={s.root}>
+      <Image
+        style={s.image}
+        source={screenName === screenType.signup ? SignUpImage : LogInImage}
+      />
+      <View style={s.formContentWrapper}>
+        <Text style={s.formTitle}>{screenName}</Text>
+        <View style={s.form}>
+          {screenName === screenType.signup && (
+            <View style={s.formInputWrapper}>
+              <At color={theme.icon.primary} />
+              <View style={s.formInputContent}>
+                <TextField
+                  placeholder="John Deo"
+                  style={s.formInput}
+                  value={values.name}
+                  onChangeText={handleChange('name')}
+                  placeholderTextColor={theme.input.text}
+                  onBlur={handleBlur('name')}
+                  enableErrors={Boolean(errors.name && touched.name)}
+                  validationMessage={errors.name}
+                />
+              </View>
+            </View>
+          )}
+          <View style={s.formInputWrapper}>
+            <User color={theme.icon.primary} />
+            <View style={s.formInputContent}>
+              <TextField
+                placeholder="yourmail@gmail.com"
+                style={s.formInput}
+                value={values.email}
+                onChangeText={handleChange('email')}
+                placeholderTextColor={theme.input.text}
+                onBlur={handleBlur('email')}
+                enableErrors={Boolean(errors.email && touched.email)}
+                validationMessage={errors.email}
+              />
+            </View>
           </View>
-          <TextInput
-            value={values.name}
-            onChange={handleChange('name')}
-            style={formStyle.input}
-          />
-        </View>
-        <View>
-          <View style={formStyle.header}>
-            <Icon name="email" color={theme.text.exeeria} size="sm" />
-            <Text style={formStyle.text}>Email</Text>
+          <View style={s.formInputWrapper}>
+            <Keyhole color={theme.icon.primary} />
+            <View style={s.formInputContent}>
+              <TextField
+                placeholder="Password"
+                style={s.formInput}
+                value={values.password}
+                onChangeText={handleChange('password')}
+                onBlur={handleBlur('password')}
+                placeholderTextColor={theme.input.text}
+                enableErrors={Boolean(errors.password && touched.password)}
+                validationMessage={errors.password}
+                secureTextEntry
+              />
+            </View>
           </View>
-          <TextInput
-            value={values.email}
-            onChange={handleChange('email')}
-            style={formStyle.input}
-          />
         </View>
-        <View>
-          <View style={formStyle.header}>
-            <Icon name="onepassword" size="sm" />
-            <Text style={formStyle.text}>Password</Text>
-          </View>
-          <TextInput
-            value={values.password}
-            style={formStyle.input}
-            onChange={handleChange('password')}
-            secureTextEntry={true}
-          />
-        </View>
-        <Button
-          style={formStyle.button}
-          textColor="white"
-          onPress={handleSubmit}>
-          {buttonText}
-        </Button>
-        <TouchableOpacity>
-          <Text style={formStyle.loginText} onPress={onPress}>
-            {bottomText}
-            {'aaa '}
+        <TouchableOpacity
+          style={[s.button, {opacity: disableButton ? 0.7 : 1}]}
+          disabled={disableButton}
+          onPress={() => handleSubmit()}
+          activeOpacity={0.8}>
+          <Text style={s.buttonText}>
+            {isUserLoading ? <ActivityIndicator color="#fff" /> : buttonText}
           </Text>
         </TouchableOpacity>
       </View>
+      <TouchableOpacity
+        hitSlop={{
+          top: 20,
+        }}
+        style={s.bottomWrapper}
+        onPress={() => {
+          resetForm();
+          onScreenChange();
+        }}>
+        <Text style={s.bottomText}>{bottomText}</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };
 
 export default AuthForm;
-const formStyle = StyleSheet.create({
-  form: {flex: 1, borderWidth: 1, justifyContent: 'center'},
+const s = StyleSheet.create({
   root: {
-    padding: 20,
-    width: 300,
-  },
-  input: {
-    backgroundColor: theme.colors.border,
-    marginTop: 8,
-    borderBottomWidth: 2,
-    borderBottomColor: theme.text.exeeria,
-    borderRadius: 10,
-    fontFamily: fonts.CarosSoftMedium,
-    paddingLeft: 12,
-    fontSize: 16,
-  },
-  header: {
-    flexDirection: 'row',
-    textAlign: 'left',
-    fontFamily: fonts.CarosSoftMedium,
-    color: theme.colors.banner,
-    fontSize: 24,
-    marginTop: 12,
-  },
-  button: {
-    backgroundColor: theme.text.exeeria,
-    marginTop: 8,
-    height: 52,
-    justifyContent: 'center',
-  },
-  text: {
-    fontFamily: fonts.CarosSoftMedium,
-    fontSize: 16,
-    color: theme.radioButton.color,
-    marginTop: 8,
-  },
-  container: {
-    justifyContent: 'center',
-    alignItems: 'center',
     flex: 1,
+    paddingHorizontal: 30,
+    paddingVertical: 10,
+    gap: 10,
     backgroundColor: theme.colors.white,
   },
-  head: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    borderBottomColor: theme.colors.blue,
-    borderBottomWidth: 3,
-    paddingBottom: 12,
+  image: {
+    height: 200,
+    resizeMode: 'contain',
+    aspectRatio: 1,
+    alignSelf: 'center',
   },
-  loginText: {
-    textAlign: 'center',
-    marginTop: 8,
-    color: theme.text.exeeria,
+
+  formContentWrapper: {flex: 1.5, gap: 20},
+
+  formTitle: {
+    fontSize: 50,
+    fontFamily: fonts.CarosSoftBold,
+    color: theme.text.primary,
+  },
+  form: {gap: 10},
+  formInputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 15,
+  },
+  formInputContent: {flex: 1},
+  formInput: {
+    borderBottomWidth: 1,
+    borderBottomColor: theme.input.bottomBorder,
+    paddingHorizontal: 5,
+    height: 50,
+    fontSize: 16,
     fontFamily: fonts.CarosSoftMedium,
+  },
+  button: {
+    backgroundColor: theme.button.color,
+    borderRadius: 10,
+    justifyContent: 'center',
+    padding: 14,
+    marginTop: 20,
+  },
+  buttonText: {
+    textAlign: 'center',
+    fontSize: 14,
+    fontFamily: fonts.CarosSoftMedium,
+    color: theme.button.text,
+  },
+  bottomWrapper: {
+    marginTop: 30,
+    marginBottom: 50,
+  },
+  bottomText: {
+    fontSize: 16,
+    fontFamily: fonts.CarosSoftBold,
+    textAlign: 'center',
+    marginBottom: 20,
   },
 });

@@ -1,44 +1,62 @@
-import React, {useEffect} from 'react';
+import React, {useCallback} from 'react';
 import {Dimensions} from 'react-native';
 import {Image, StyleSheet, Text, View} from 'react-native';
-import {landing} from '../../../assets/Image';
+import {LandingImage} from '../../assets/Image';
 import {fonts} from '../../utils/fonts';
 import {theme} from '../../utils/theme';
-import {useNavigation} from '@react-navigation/native';
-import Logo from '../../components/logo';
+import {setUser} from '../../features/user/userSlice';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useUser} from '../../entity/hook/useUser';
+import {useDispatch} from 'react-redux';
 import {Icon} from '../../modules/core';
+import {updateTokenHeader} from '../../entity/apiClient';
 
 const LandingScreen = () => {
-  const navigation = useNavigation<any>();
-  useEffect(() => {
-    setTimeout(() => {
-      navigation.replace('MainScreen');
-    }, 2000);
-  }, [navigation]);
+  const navigation = useNavigation();
+  const {getUser} = useUser();
+  const dispatch = useDispatch();
+
+  const fetchUser = useCallback(async () => {
+    const token = await AsyncStorage.getItem('token');
+    if (!token) {
+      navigation.navigate('AuthScreen' as never);
+    } else {
+      console.log('fetch user');
+      await updateTokenHeader();
+      const res = await getUser.refetch();
+      console.log(res, 'res');
+      dispatch(setUser(res.data));
+      navigation.navigate('MainScreen' as never);
+    }
+  }, [dispatch, getUser, navigation]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchUser();
+    }, [fetchUser]),
+  );
 
   return (
-    <View style={landingScreenStyle.container}>
-      <View style={landingScreenStyle.logoContainer}>
-        <Logo />
-      </View>
-      <View style={landingScreenStyle.sectionTwo}>
-        <View style={landingScreenStyle.background} />
-        <View style={landingScreenStyle.nextContainer}>
-          <View style={landingScreenStyle.nextButton}>
+    <View style={s.container}>
+      <View style={s.sectionTwo}>
+        <View style={s.background} />
+        <View style={s.nextContainer}>
+          <View style={s.nextButton}>
             <Icon name="chevron-right" color="white" />
           </View>
         </View>
-        <Image source={landing} style={landingScreenStyle.landingImg} />
-        <Text style={landingScreenStyle.goal}>
+        <Image source={LandingImage} style={s.landingImg} />
+        <Text style={s.goal}>
           Track every penny and take control of your finances with us.
         </Text>
-        <Text style={landingScreenStyle.description}>
+        <Text style={s.description}>
           Spend smarter, save better, and achieve your financial goals with
           SpendMate.
         </Text>
-        <View style={landingScreenStyle.dotContainer}>
+        <View style={s.dotContainer}>
           {[...Array(3).keys()].map(i => {
-            return <View style={landingScreenStyle.bottomDot} key={i} />;
+            return <View style={s.bottomDot} key={i} />;
           })}
         </View>
       </View>
@@ -48,7 +66,7 @@ const LandingScreen = () => {
 
 export default LandingScreen;
 
-const landingScreenStyle = StyleSheet.create({
+const s = StyleSheet.create({
   container: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -106,7 +124,7 @@ const landingScreenStyle = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 100,
-    backgroundColor: theme.colors.pending,
+    backgroundColor: theme.status.pending,
     marginHorizontal: 2,
   },
   dotContainer: {

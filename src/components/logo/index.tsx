@@ -2,14 +2,14 @@ import React from 'react';
 import {Text} from 'react-native';
 import {Image, StyleSheet} from 'react-native';
 import {View} from 'react-native';
-import {logo} from '../../../assets/Image';
+import {LogoImage} from '../../assets/Image';
 import {fonts} from '../../utils/fonts';
 import {theme} from '../../utils/theme';
 
 const Logo = () => {
   return (
     <View style={logoStyle.root}>
-      <Image source={logo} style={logoStyle.image} />
+      <Image source={LogoImage} style={logoStyle.image} />
       <Text style={logoStyle.logotext}>SpendMate</Text>
     </View>
   );

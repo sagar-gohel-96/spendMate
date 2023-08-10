@@ -1,12 +1,52 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import {Image, StyleSheet} from 'react-native';
 import {View} from 'react-native';
 import {Text} from 'react-native';
-import {banner} from '../../../../assets/Image';
+import {BannerImage} from '../../../assets/Image';
 import {fonts} from '../../../utils/fonts';
 import {theme} from '../../../utils/theme';
+import {useTransaction} from '../../../entity/hook/useTransaction';
+import {GetTransactionData, TransactionType} from '../../../types';
+import {currency} from '../../../utils';
+import dayjs from 'dayjs';
 
 const HomeBanner = () => {
+  const {getTransactions} = useTransaction();
+
+  /**
+   * @param monthIndex: monthIndex starting from 0 to 11.
+   * 0 indicates Jan and 11 indicates Dec
+   */
+  const calculateMonthlyTotalExpense = useCallback(
+    (monthIndex: number) => {
+      if (getTransactions.data?.data.length === 0) {
+        return 0;
+      }
+      const allTransactions = (getTransactions.data?.data ??
+        []) as GetTransactionData[];
+
+      const expenseTransactions = allTransactions.filter(
+        t => t.transactionType === TransactionType.Expense,
+      );
+
+      const monthlyExpense = expenseTransactions.filter(
+        t => dayjs(t.date).month() === monthIndex,
+      );
+
+      const monthlyExpenseTotal = monthlyExpense.reduce(
+        (acc, item) => acc + (item.amount ?? 0),
+        0,
+      );
+
+      return monthlyExpenseTotal;
+    },
+    [getTransactions.data],
+  );
+
+  console.log(
+    calculateMonthlyTotalExpense(dayjs().month() - 1),
+    'last month data',
+  );
   const {
     headtag,
     moneytag,
@@ -17,18 +57,35 @@ const HomeBanner = () => {
     bannerContainer,
     bannerImage,
   } = HomeBannerStyle;
+
+  const lastMonthExpense = calculateMonthlyTotalExpense(dayjs().month() - 1);
+  const currentMonthExpense = calculateMonthlyTotalExpense(dayjs().month());
+  const diffrenceExpenseOfMonth = currentMonthExpense - lastMonthExpense;
+
   return (
     <View style={root}>
       <View>
         <Text style={headtag}>Expense total</Text>
-        <Text style={moneytag}>$ 3264</Text>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text style={moneytag}>{`${currentMonthExpense} ${currency} `}</Text>
+          <Text style={headtag}>{`(${dayjs().format('MMMM')})`}</Text>
+        </View>
         <View style={diffContainer}>
-          <Text style={difftag}>+$320</Text>
-          <Text style={diffText}> than last month</Text>
+          <Text
+            style={difftag}>{` ${diffrenceExpenseOfMonth} ${currency}`}</Text>
+          <Text style={diffText}>
+            {' '}
+            than last {`${dayjs().subtract(1, 'month').format('MMMM')}`}
+          </Text>
         </View>
       </View>
       <View style={bannerContainer}>
-        <Image source={banner} style={bannerImage} />
+        <Image source={BannerImage} style={bannerImage} />
       </View>
     </View>
   );

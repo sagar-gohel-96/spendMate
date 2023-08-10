@@ -1,4 +1,4 @@
-import React, {PropsWithChildren} from 'react';
+import React, {PropsWithChildren, useMemo} from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -6,6 +6,7 @@ import {
   View,
   Image,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import {fonts, theme} from '../../utils';
 import {TextField} from 'react-native-ui-lib';
@@ -14,8 +15,8 @@ import {LogInImage, SignUpImage} from '../../assets/Image/index';
 import {useFormik} from 'formik';
 import {screenType} from './index';
 import {
-  logInValidationSchema,
   signUpValidationSchema,
+  logInValidationSchema,
 } from '../../../validationShema/index';
 
 interface AuthProps {
@@ -40,26 +41,43 @@ const AuthForm: React.FC<PropsWithChildren<AuthProps>> = props => {
     screenName,
     buttonText,
     bottomText,
-    onSubmit,
+    onSubmit: handleFormSubmit,
     onScreenChange,
     isUserLoading,
   } = props;
 
-  const {handleChange, resetForm, values, errors, dirty, touched} = useFormik({
-    initialValues: {email: '', password: ''},
+  const intialValue = useMemo(() => {
+    if (screenName === screenType.login) {
+      return {email: '', password: ''};
+    }
+    return {name: '', email: '', password: ''};
+  }, [screenName]);
+
+  const {
+    handleChange,
+    resetForm,
+    values,
+    errors,
+    dirty,
+    handleBlur,
+    touched,
+    handleSubmit,
+  } = useFormik({
+    initialValues: intialValue,
     validationSchema:
-      screenName === screenType.login
-        ? logInValidationSchema
-        : signUpValidationSchema,
+      screenName === screenType.signup
+        ? signUpValidationSchema
+        : logInValidationSchema,
     onSubmit: async (value: SignUpField) => {
       try {
-        onSubmit(value, {resetForm});
+        handleFormSubmit(value, {resetForm});
       } catch (error) {
         console.log(error);
       }
     },
   });
-  console.log(errors, 'erros');
+
+  const disableButton = !(dirty && Object.keys(errors).length === 0);
   return (
     <ScrollView style={s.root}>
       <Image
@@ -75,13 +93,13 @@ const AuthForm: React.FC<PropsWithChildren<AuthProps>> = props => {
               <View style={s.formInputContent}>
                 <TextField
                   placeholder="John Deo"
-                  placeholderTextColor={theme.input.text}
-                  value={values.name}
                   style={s.formInput}
+                  value={values.name}
                   onChangeText={handleChange('name')}
-                  enableErrors
+                  placeholderTextColor={theme.input.text}
+                  onBlur={handleBlur('name')}
+                  enableErrors={Boolean(errors.name && touched.name)}
                   validationMessage={errors.name}
-                  validateOnChange
                 />
               </View>
             </View>
@@ -91,12 +109,12 @@ const AuthForm: React.FC<PropsWithChildren<AuthProps>> = props => {
             <View style={s.formInputContent}>
               <TextField
                 placeholder="yourmail@gmail.com"
-                placeholderTextColor={theme.input.text}
-                value={values.email}
                 style={s.formInput}
+                value={values.email}
                 onChangeText={handleChange('email')}
-                enableErrors
-                validateOnBlur
+                placeholderTextColor={theme.input.text}
+                onBlur={handleBlur('email')}
+                enableErrors={Boolean(errors.email && touched.email)}
                 validationMessage={errors.email}
               />
             </View>
@@ -108,22 +126,23 @@ const AuthForm: React.FC<PropsWithChildren<AuthProps>> = props => {
                 placeholder="Password"
                 style={s.formInput}
                 value={values.password}
-                placeholderTextColor={theme.input.text}
                 onChangeText={handleChange('password')}
+                onBlur={handleBlur('password')}
+                placeholderTextColor={theme.input.text}
+                enableErrors={Boolean(errors.password && touched.password)}
                 validationMessage={errors.password}
                 secureTextEntry
-                enableErrors={touched.password}
               />
             </View>
           </View>
         </View>
         <TouchableOpacity
-          style={s.button}
-          disabled={!dirty}
-          onPress={() => onSubmit(values, {resetForm})}
+          style={[s.button, {opacity: disableButton ? 0.7 : 1}]}
+          disabled={disableButton}
+          onPress={() => handleSubmit()}
           activeOpacity={0.8}>
           <Text style={s.buttonText}>
-            {isUserLoading ? `${buttonText}...` : buttonText}
+            {isUserLoading ? <ActivityIndicator color="#fff" /> : buttonText}
           </Text>
         </TouchableOpacity>
       </View>

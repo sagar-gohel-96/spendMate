@@ -22,8 +22,10 @@ const LandingScreen = () => {
     if (!token) {
       navigation.navigate('AuthScreen' as never);
     } else {
+      console.log('fetch user');
       await updateTokenHeader();
       const res = await getUser.refetch();
+      console.log(res, 'res');
       dispatch(setUser(res.data));
       navigation.navigate('MainScreen' as never);
     }
@@ -36,25 +38,25 @@ const LandingScreen = () => {
   );
 
   return (
-    <View style={landingScreenStyle.container}>
-      <View style={landingScreenStyle.sectionTwo}>
-        <View style={landingScreenStyle.background} />
-        <View style={landingScreenStyle.nextContainer}>
-          <View style={landingScreenStyle.nextButton}>
+    <View style={s.container}>
+      <View style={s.sectionTwo}>
+        <View style={s.background} />
+        <View style={s.nextContainer}>
+          <View style={s.nextButton}>
             <Icon name="chevron-right" color="white" />
           </View>
         </View>
-        <Image source={LandingImage} style={landingScreenStyle.landingImg} />
-        <Text style={landingScreenStyle.goal}>
+        <Image source={LandingImage} style={s.landingImg} />
+        <Text style={s.goal}>
           Track every penny and take control of your finances with us.
         </Text>
-        <Text style={landingScreenStyle.description}>
+        <Text style={s.description}>
           Spend smarter, save better, and achieve your financial goals with
           SpendMate.
         </Text>
-        <View style={landingScreenStyle.dotContainer}>
+        <View style={s.dotContainer}>
           {[...Array(3).keys()].map(i => {
-            return <View style={landingScreenStyle.bottomDot} key={i} />;
+            return <View style={s.bottomDot} key={i} />;
           })}
         </View>
       </View>
@@ -64,7 +66,7 @@ const LandingScreen = () => {
 
 export default LandingScreen;
 
-const landingScreenStyle = StyleSheet.create({
+const s = StyleSheet.create({
   container: {
     justifyContent: 'center',
     alignItems: 'center',

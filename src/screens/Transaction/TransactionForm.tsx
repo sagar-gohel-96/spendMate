@@ -3,15 +3,15 @@ import {
   ActivityIndicator,
   Alert,
   Dimensions,
+  FlatList,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
-import {RadioButton, RadioGroup, TextField} from 'react-native-ui-lib';
+import {TextField} from 'react-native-ui-lib';
 import {useKeyboard} from '@react-native-community/hooks';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import {Modalize, useModalize} from 'react-native-modalize';
 import Snackbar from 'react-native-snackbar';
 import {useSelector} from 'react-redux';
 import {RootState} from 'app/store';
@@ -25,7 +25,6 @@ import {transactionValidationSchema} from '../../../validationShema';
 import {CreateTransactionPayload, TransactionType} from '../../types';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {List, Calendar, FileText, CurrencyInr} from 'phosphor-react-native';
-import {X} from 'phosphor-react-native';
 
 export type MyRouteProp = RouteProp<Record<string, {id?: string}>>;
 interface TransactionFormProps {
@@ -36,16 +35,6 @@ interface TransactionFormProps {
 const TransactionForm = (props: TransactionFormProps) => {
   const {close, id} = props;
   const [paramId, setParamId] = useState(id);
-  const {ref, open, close: closeCategorySheet} = useModalize();
-  const keyboard = useKeyboard();
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const [styleType, setStyleType] = useState(false);
-  const scrollViewRef = useRef<ScrollView | null>(null);
-
-  const {
-    user: {user},
-  } = useSelector((store: RootState) => store);
-
   const {
     mutateCreateTransaction,
     createTransactionLoading,
@@ -56,6 +45,20 @@ const TransactionForm = (props: TransactionFormProps) => {
     updateTransactionLoading,
     deleteTransactionLoading,
   } = useTransaction(paramId);
+  const keyboard = useKeyboard();
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [isCategoryVisible, setCategoryVisible] = useState(false);
+
+  const [activeTab, setActiveTab] = useState<TransactionType>(
+    TransactionType.Expense,
+  );
+
+  const selectedCategory =
+    activeTab === TransactionType.Expense
+      ? expenseCategories[0]
+      : incomeCategories[0];
+
+  const [activeCategory, setActiveCategory] = useState(selectedCategory);
 
   const formik = useFormik({
     initialValues: {} as CreateTransactionPayload,
@@ -63,12 +66,44 @@ const TransactionForm = (props: TransactionFormProps) => {
     onSubmit: () => {},
   });
 
-  const {values, handleChange, resetForm, setFieldValue, errors} = formik;
+  const {
+    values,
+    handleChange,
+    resetForm,
+    setFieldValue,
+    errors,
+    touched,
+    dirty,
+    handleBlur,
+  } = formik;
+
+  const scrollViewRef = useRef<ScrollView | null>(null);
+  const disableButton = !(dirty && Object.keys(errors).length === 0);
+
+  const {
+    user: {user},
+  } = useSelector((store: RootState) => store);
 
   const formikRef = useRef(formik);
+
   useEffect(() => {
-    setParamId(id);
-  }, [id]);
+    if (paramId) {
+      setParamId(id);
+      const category =
+        values.transactionType === TransactionType.Expense
+          ? expenseCategories[0]
+          : incomeCategories[0];
+      setFieldValue('category', category);
+      setActiveTab(singleTransaction?.data?.transactionType as TransactionType);
+      return;
+    }
+  }, [
+    id,
+    paramId,
+    setFieldValue,
+    singleTransaction?.data?.transactionType,
+    values.transactionType,
+  ]);
 
   const setFormValues = useCallback(() => {
     if (singleTransaction) {
@@ -87,18 +122,10 @@ const TransactionForm = (props: TransactionFormProps) => {
         date: new Date(),
         description: '',
         transactionType: TransactionType.Expense,
-        amount: null,
+        amount: 0,
       });
     }
   }, [singleTransaction, user?._id]);
-
-  useEffect(() => {
-    const category =
-      values.transactionType === TransactionType.Expense
-        ? expenseCategories[0]
-        : incomeCategories[0];
-    setFieldValue('category', category);
-  }, [setFieldValue, values.transactionType]);
 
   useEffect(() => {
     setFormValues();
@@ -120,6 +147,7 @@ const TransactionForm = (props: TransactionFormProps) => {
 
   const handleConfirm = (date: Date) => {
     setFieldValue('date', date);
+    setDatePickerVisibility(false);
   };
 
   const handleCreateTransaction = async () => {
@@ -130,6 +158,7 @@ const TransactionForm = (props: TransactionFormProps) => {
       });
       return;
     }
+
     await mutateCreateTransaction(values);
     Snackbar.show({
       text: 'Transaction Created',
@@ -181,208 +210,272 @@ const TransactionForm = (props: TransactionFormProps) => {
 
   return (
     <>
-      <ScrollView ref={scrollViewRef}>
-        {singleTransactionLoading ? (
-          <View style={s.loadingWrapper}>
-            <ActivityIndicator />
-          </View>
-        ) : (
-          <>
-            <View style={s.root}>
-              <View style={s.tabWrapper}>
+      {singleTransactionLoading ? (
+        <View style={s.loadingWrapper}>
+          <ActivityIndicator />
+        </View>
+      ) : (
+        <>
+          <View style={s.root}>
+            <View style={s.tabWrapper}>
+              <View
+                style={[
+                  s.tab,
+                  activeTab === TransactionType.Income && s.activeTab,
+                ]}>
                 <TouchableOpacity
-                  onPress={() => {
-                    setFieldValue('transactionType', TransactionType.Expense);
-                    setStyleType(!styleType);
-                  }}
-                  style={styleType ? s.activeTab : s.inActiveTab}>
-                  <Text style={styleType ? s.activeTabText : s.inActiveTabText}>
-                    Expense
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
+                  style={s.tabButton}
+                  activeOpacity={0.8}
                   onPress={() => {
                     setFieldValue('transactionType', TransactionType.Income);
-                    setStyleType(!styleType);
-                  }}
-                  style={!styleType ? s.activeTab : s.inActiveTab}>
+                    setActiveTab(TransactionType.Income);
+                  }}>
                   <Text
-                    style={!styleType ? s.activeTabText : s.inActiveTabText}>
+                    style={[
+                      s.tabText,
+                      activeTab === TransactionType.Income && s.activeTabText,
+                    ]}>
                     Income
                   </Text>
                 </TouchableOpacity>
               </View>
-              <View style={s.form}>
-                <View style={s.formInputWrapper}>
-                  <List size={32} color={theme.icon.primary} />
-                  <View style={s.formInputContent}>
-                    <TextField
-                      placeholder="category"
-                      style={s.formInput}
-                      onFocus={() => open()}
-                      value={values.category}
-                      showSoftInputOnFocus={false}
-                      onPressOut={() => open()}
-                    />
-                  </View>
-                </View>
-
-                <View style={s.formInputWrapper}>
-                  <Calendar size={32} color={theme.icon.primary} />
-                  <View style={s.formInputContent}>
-                    <TextField
-                      placeholder="DD/MM/YYYY"
-                      style={s.formInput}
-                      showSoftInputOnFocus={false}
-                      onFocus={() => showDatePicker()}
-                      value={values?.date?.toDateString()}
-                    />
-                  </View>
-                </View>
-
-                <View style={s.formInputWrapper}>
-                  <FileText size={32} color={theme.icon.primary} />
-                  <View style={s.formInputContent}>
-                    <TextField
-                      placeholder="Description"
-                      style={s.formInput}
-                      value={values.description}
-                      onChangeText={handleChange('description')}
-                    />
-                  </View>
-                </View>
-
-                <View style={s.formInputWrapper}>
-                  <CurrencyInr size={32} color={theme.icon.primary} />
-                  <View style={s.formInputContent}>
-                    <TextField
-                      placeholder="0"
-                      value={values.amount?.toString()}
-                      keyboardType="numeric"
-                      onChangeText={handleChange('amount')}
-                      style={s.formInput}
-                    />
-                  </View>
+              <View
+                style={[
+                  s.tab,
+                  activeTab === TransactionType.Expense && s.activeTab,
+                ]}>
+                <TouchableOpacity
+                  style={s.tabButton}
+                  activeOpacity={0.8}
+                  hitSlop={20}
+                  onPress={() => {
+                    setFieldValue('transactionType', TransactionType.Expense);
+                    setActiveTab(TransactionType.Expense);
+                  }}>
+                  <Text
+                    style={[
+                      s.tabText,
+                      activeTab === TransactionType.Expense && s.activeTabText,
+                    ]}>
+                    Expense
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View style={s.form}>
+              <View style={s.formInputWrapper}>
+                <List size={32} color={theme.icon.primary} />
+                <View style={s.formInputContent}>
+                  <TextField
+                    placeholder="category"
+                    style={s.formInput}
+                    onFocus={() => setCategoryVisible(true)}
+                    value={values.category}
+                    showSoftInputOnFocus={false}
+                    onPressOut={() => setCategoryVisible(true)}
+                    enableErrors={Boolean(errors.category && touched.category)}
+                    validateOnStart
+                  />
                 </View>
               </View>
-              <DateTimePickerModal
-                isVisible={isDatePickerVisible}
-                mode="date"
-                onConfirm={handleConfirm}
-                onCancel={hideDatePicker}
-              />
-              {paramId ? (
-                <View style={s.btngrp}>
-                  <View style={s.secondaryButton}>
-                    <TouchableOpacity
-                      activeOpacity={0.8}
-                      onPress={() => showDeleteAlert(handleDeleteTransaction)}
-                      disabled={deleteTransactionLoading}>
-                      <Text style={s.secondaryButtonText}>
-                        {deleteTransactionLoading ? 'Deleting' : 'Delete'}
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                  <View style={s.primaryButton}>
-                    <TouchableOpacity
-                      activeOpacity={0.8}
-                      onPress={handleUpdateTransaction}
-                      disabled={updateTransactionLoading}>
-                      <Text style={s.buttonText}>
-                        {updateTransactionLoading ? 'Updating...' : 'Update'}
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
+              <View style={s.formInputWrapper}>
+                <Calendar size={32} color={theme.icon.primary} />
+                <View style={s.formInputContent}>
+                  <TextField
+                    placeholder="DD/MM/YYYY"
+                    style={s.formInput}
+                    showSoftInputOnFocus={false}
+                    onFocus={() => showDatePicker()}
+                    value={values?.date?.toDateString()}
+                    validationMessage={errors.date as string}
+                    enableErrors={Boolean(errors.date && touched.date)}
+                    validateOnStart
+                  />
                 </View>
-              ) : (
-                <View style={s.btngrp}>
-                  <View style={s.secondaryButton}>
-                    <TouchableOpacity
-                      activeOpacity={0.8}
-                      onPress={handleCancelTransaction}>
-                      <Text style={s.secondaryButtonText}>Cancel</Text>
-                    </TouchableOpacity>
-                  </View>
-                  <View style={s.primaryButton}>
-                    <TouchableOpacity
-                      activeOpacity={0.8}
-                      onPress={handleCreateTransaction}
-                      disabled={createTransactionLoading}>
-                      <Text style={s.buttonText}>
-                        {createTransactionLoading ? 'Saving...' : 'Save'}
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
+              </View>
+
+              <View style={s.formInputWrapper}>
+                <FileText size={32} color={theme.icon.primary} />
+                <View style={s.formInputContent}>
+                  <TextField
+                    placeholder="Description"
+                    style={s.formInput}
+                    value={values.description}
+                    onChangeText={handleChange('description')}
+                    onBlur={handleBlur('description')}
+                    validationMessage={errors.description}
+                    validateOnStart
+                    enableErrors={Boolean(
+                      errors.description && touched.description,
+                    )}
+                  />
                 </View>
-              )}
+              </View>
+              <View style={s.formInputWrapper}>
+                <CurrencyInr size={32} color={theme.icon.primary} />
+                <View style={s.formInputContent}>
+                  <TextField
+                    placeholder="0"
+                    value={String(values.amount)}
+                    keyboardType="numeric"
+                    onBlur={handleBlur('amount')}
+                    onChangeText={handleChange('amount')}
+                    style={s.formInput}
+                    validationMessage={errors.amount}
+                    validateOnBlur
+                    enableErrors={Boolean(errors.amount && touched.amount)}
+                  />
+                </View>
+              </View>
             </View>
-          </>
-        )}
-        {keyboard.keyboardShown && <View style={{height: 1400}} />}
-      </ScrollView>
-      <Modalize adjustToContentHeight ref={ref}>
-        <TouchableOpacity
-          onPress={() => closeCategorySheet()}
-          style={s.cancelWrapper}
-          hitSlop={0.3}>
-          <X weight="fill" size={28} color="white" />
-        </TouchableOpacity>
-        <View style={s.categoryWrapper}>
-          <RadioGroup
-            onValueChange={handleChange('category')}
-            value={values.category}
-            style={s.radioGroup}>
-            {values.transactionType === 'Expense' &&
-              expenseCategories.map((i, index) => (
-                <View style={s.categoryContent} key={index}>
-                  <RadioButton value={i} />
-                  <Text style={s.categoryText}>{i}</Text>
+            <DateTimePickerModal
+              isVisible={isDatePickerVisible}
+              mode="date"
+              onConfirm={handleConfirm}
+              onCancel={hideDatePicker}
+            />
+            {paramId ? (
+              <View style={s.btngrp}>
+                <View style={s.secondaryButton}>
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    onPress={() => showDeleteAlert(handleDeleteTransaction)}
+                    disabled={deleteTransactionLoading}>
+                    <Text style={s.secondaryButtonText}>
+                      {deleteTransactionLoading ? 'Deleting' : 'Delete'}
+                    </Text>
+                  </TouchableOpacity>
                 </View>
-              ))}
-            {values.transactionType === 'Income' &&
-              incomeCategories.map((i, index) => (
-                <View style={s.categoryContent} key={index}>
-                  <RadioButton value={i} />
-                  <Text style={s.categoryText}>{i}</Text>
+                <View style={s.primaryButton}>
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    onPress={handleUpdateTransaction}
+                    disabled={updateTransactionLoading}>
+                    <Text style={s.buttonText}>
+                      {updateTransactionLoading ? 'Updating...' : 'Update'}
+                    </Text>
+                  </TouchableOpacity>
                 </View>
-              ))}
-          </RadioGroup>
+              </View>
+            ) : (
+              <View style={s.btngrp}>
+                <View style={s.secondaryButton}>
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    onPress={handleCancelTransaction}>
+                    <Text style={s.secondaryButtonText}>Cancel</Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={s.primaryButton}>
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    onPress={handleCreateTransaction}
+                    disabled={disableButton}>
+                    <Text style={s.buttonText}>
+                      {createTransactionLoading ? 'Saving...' : 'Save'}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+          </View>
+        </>
+      )}
+      {isCategoryVisible && (
+        <View style={s.category}>
+          <FlatList
+            data={
+              activeTab === TransactionType.Expense
+                ? expenseCategories
+                : incomeCategories
+            }
+            contentContainerStyle={{
+              padding: 10,
+            }}
+            renderItem={({item}) => (
+              <TouchableOpacity
+                style={[
+                  s.categoryButton,
+                  item === activeCategory && s.selectedButton,
+                ]}
+                onPress={() => {
+                  setFieldValue('category', item);
+                  setActiveCategory(item);
+                }}>
+                <Text
+                  style={[
+                    s.categoryText,
+                    item === activeCategory && s.selectedCategory,
+                  ]}>
+                  {item}
+                </Text>
+              </TouchableOpacity>
+            )}
+            keyExtractor={item => item}
+            numColumns={3}
+          />
         </View>
-      </Modalize>
+      )}
+      {keyboard.keyboardShown && <View style={{height: 1400}} />}
     </>
   );
 };
 export default TransactionForm;
 
 const s = StyleSheet.create({
+  category: {
+    display: 'flex',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    flexDirection: 'row',
+  },
+  categoryButton: {
+    width: Dimensions.get('window').width / 3 - 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 4,
+    margin: 5,
+    textAlign: 'center',
+    borderWidth: 1,
+    borderColor: '#000000',
+    borderRadius: 4,
+  },
+  categoryText: {
+    fontFamily: fonts.CarosSoftBold,
+  },
+  selectedCategory: {
+    color: theme.button.color,
+  },
+  selectedButton: {
+    borderColor: theme.button.color,
+  },
   tabWrapper: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     marginBottom: 15,
+    backgroundColor: theme.button.color,
+    borderRadius: 10,
+    padding: 5,
+    display: 'flex',
   },
-  inActiveTab: {
-    borderBottomWidth: 2,
-    paddingVertical: 12,
-    paddingHorizontal: 50,
-    borderBottomColor: theme.button.color,
+  tab: {
+    flex: 1,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+  },
+  tabButton: {
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+  },
+  tabText: {fontSize: 16, color: theme.button.text},
+  activeTab: {
+    backgroundColor: '#ffffff',
   },
   activeTabText: {
-    textAlign: 'center',
-    fontFamily: fonts.CarosSoftBold,
-    color: theme.icon.primary,
-    fontSize: 16,
-  },
-  activeTab: {
-    borderBottomWidth: 2,
-    paddingVertical: 12,
-    paddingHorizontal: 50,
-    borderBottomColor: theme.icon.primary,
-  },
-  inActiveTabText: {
-    textAlign: 'center',
-    fontFamily: fonts.CarosSoftMedium,
     color: theme.button.color,
-    fontSize: 16,
   },
   root: {padding: 18},
   cancelWrapper: {
@@ -400,68 +493,10 @@ const s = StyleSheet.create({
     justifyContent: 'center',
     height: Dimensions.get('window').height,
   },
-  banner: {
-    fontFamily: fonts.CarosSoftBold,
-    fontSize: 24,
-    color: theme.text.header,
-    borderWidth: 1,
-    textAlign: 'center',
-  },
-  transactionType: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    margin: 4,
-  },
-
-  header: {
-    fontFamily: fonts.CarosSoftBold,
-    fontSize: 16,
-    color: theme.text.header,
-    paddingLeft: 8,
-    marginRight: 20,
-    flex: 1,
-  },
-
-  headerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 16,
-  },
-
-  categoryText: {
-    fontFamily: fonts.CarosSoftMedium,
-    fontSize: 20,
-  },
-
-  input: {
-    marginTop: 8,
-    borderBottomWidth: 2,
-    borderBottomColor: theme.text.exeeria,
-    fontFamily: fonts.CarosSoftMedium,
-    paddingLeft: 12,
-    flex: 2,
-    fontSize: 16,
-  },
 
   categoryWrapper: {
     padding: 20,
   },
-
-  typeRadio: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-
-  categoryContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 20,
-  },
-  radioGroup: {
-    gap: 10,
-  },
-
-  errorText: {color: 'red', fontFamily: fonts.CarosSoftMedium},
 
   buttonText: {
     fontSize: 14,

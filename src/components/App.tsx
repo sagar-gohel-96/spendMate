@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import 'react-native-gesture-handler';
-import {Provider as PaperProvider} from 'react-native-paper';
 import NavigationStack from '../navigation';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {QueryClientProvider, QueryClient} from 'react-query';
@@ -13,11 +12,9 @@ function App(): JSX.Element {
   return (
     <Provider store={store}>
       <GestureHandlerRootView style={{flex: 1}}>
-        <PaperProvider>
-          <QueryClientProvider client={queryClient}>
-            <NavigationStack />
-          </QueryClientProvider>
-        </PaperProvider>
+        <QueryClientProvider client={queryClient}>
+          <NavigationStack />
+        </QueryClientProvider>
       </GestureHandlerRootView>
     </Provider>
   );

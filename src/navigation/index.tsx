@@ -11,11 +11,6 @@ const NavigationStack = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="LandingScreen">
-        {/* <Stack.Screen
-        name="Profile"
-        component={UserScreen}
-        options={{headerShown: false}}
-      /> */}
         <Stack.Screen
           name="AuthScreen"
           component={AuthScreen}

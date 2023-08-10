@@ -38,27 +38,24 @@ const AuthScreen = () => {
     async (value: CreateUserPayload, {resetForm}: any) => {
       try {
         const res = await signupUserMutate(value);
+        console.log(res);
 
         if (res.success) {
           await AsyncStorage.setItem('token', res.data);
 
           const userData = await getUser.refetch();
           dispatch(setUser(userData.data));
-          Snackbar.show({
-            text: 'Account created',
-            duration: Snackbar.LENGTH_LONG,
-          });
 
           resetForm({});
           navigation.navigate('MainScreen' as never);
         } else {
-          setScreen(screenType.login);
-          Snackbar.show({
-            text: 'User already have an account, Please login here',
-            duration: Snackbar.LENGTH_LONG,
-          });
         }
       } catch (error) {
+        setScreen(screenType.login);
+        Snackbar.show({
+          text: 'User already have an account with this email, Please login here',
+          duration: Snackbar.LENGTH_LONG,
+        });
         console.log(error);
       }
     },
@@ -76,7 +73,7 @@ const AuthScreen = () => {
           dispatch(setUser(userData.data));
 
           Snackbar.show({
-            text: 'Login Successful',
+            text: res.message,
             duration: Snackbar.LENGTH_LONG,
           });
 
@@ -101,7 +98,7 @@ const AuthScreen = () => {
       {screen === screenType.signup ? (
         <AuthForm
           initialValues={{email: '', password: ''}}
-          buttonText="Register"
+          buttonText={screenType.signup}
           screenName={screenType.signup}
           bottomText="Already Have An Account? Log In"
           onScreenChange={() => setScreen(screenType.login)}
@@ -113,7 +110,7 @@ const AuthScreen = () => {
       ) : (
         <AuthForm
           initialValues={{email: '', password: ''}}
-          buttonText="Login"
+          buttonText={screenType.login}
           screenName={screenType.login}
           bottomText="Not an Member? Register"
           onScreenChange={() => {

@@ -52,15 +52,15 @@ const TransactionList = (props: TransactionListProps) => {
     const total = transactions.reduce(
       (acc: number, transaction: CreateTransactionPayload) => {
         if (transaction.transactionType === 'Expense') {
-          return acc - (transaction.amount ?? 0);
+          return acc - transaction.amount;
         } else if (transaction.transactionType === 'Income') {
-          return acc + (transaction.amount ?? 0);
+          return acc + transaction.amount;
         }
         return acc;
       },
       0,
     );
-    return `${total + currency}`;
+    return Math.abs(total) + currency;
   }, [getTransactions.data]);
 
   const renderItem = ({item}: {item: GetTransactionData}) => {
@@ -72,7 +72,7 @@ const TransactionList = (props: TransactionListProps) => {
           open();
         }}
         key={item._id}>
-        <View style={s.transcation}>
+        <View style={s.container}>
           <Icon
             name={item.category}
             size="md"
@@ -80,29 +80,17 @@ const TransactionList = (props: TransactionListProps) => {
             color={style.color}
           />
           <View style={s.section}>
-            <View style={s.transactionContainer}>
-              <View style={{flex: 1}}>
-                <Text style={s.categoryText}>
-                  {item.category.toLocaleUpperCase()}
-                </Text>
-                <Text
-                  ellipsizeMode="tail"
-                  numberOfLines={1}
-                  style={s.descriptionText}>
-                  {item.description ?? '...'}
-                </Text>
-              </View>
-              <View style={{flex: 1, justifyContent: 'flex-end'}}>
-                <Text style={s.amount}>
-                  {amountString({
-                    amount: item.amount ?? 0,
-                    type: item.transactionType,
-                  })}
-                </Text>
-                <Text style={s.descriptionText}>
-                  {dayjs(item?.createdAt).format('MM MMMM YYYY')}
-                </Text>
-              </View>
+            <View style={s.sectionLeft}>
+              <Text style={s.categoryText}>
+                {item.category.toLocaleUpperCase()}
+              </Text>
+              <Text style={s.descriptionText}>{item.description ?? '...'}</Text>
+            </View>
+            <View style={s.sectionRight}>
+              <Text style={s.amount}>{item.amount + currency}</Text>
+              <Text style={s.descriptionText}>
+                {dayjs(item?.createdAt).format('MM MMMM YYYY')}
+              </Text>
             </View>
           </View>
         </View>
@@ -111,23 +99,21 @@ const TransactionList = (props: TransactionListProps) => {
   };
 
   return (
-    <>
-      <View style={s.root}>
-        <View style={s.title}>
-          <Text style={s.headText}>Transactions</Text>
-          <Text style={s.headText}>{calculateTotalAmount()}</Text>
-        </View>
-        <Divider marginVertical={10} />
-        {isLoading && <ActivityIndicator />}
-        {getTransactions?.data?.data?.length > 0 ? (
-          getTransactions?.data?.data.map((item: GetTransactionData) =>
-            renderItem({item}),
-          )
-        ) : (
-          <Image source={NoDataImage} style={s.image} />
-        )}
+    <View style={s.root}>
+      <View style={s.title}>
+        <Text style={s.headText}>Transactions</Text>
+        <Text style={s.headText}>{calculateTotalAmount()}</Text>
       </View>
-    </>
+      <Divider marginVertical={10} />
+      {isLoading && <ActivityIndicator />}
+      {getTransactions?.data?.data?.length > 0 ? (
+        getTransactions?.data?.data.map((item: GetTransactionData) =>
+          renderItem({item}),
+        )
+      ) : (
+        <Image source={NoDataImage} style={s.image} />
+      )}
+    </View>
   );
 };
 
@@ -142,6 +128,13 @@ const s = StyleSheet.create({
     borderColor: theme.colors.border,
     width: '100%',
   },
+  container: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    marginVertical: 12,
+    flex: 1,
+    gap: 15,
+  },
   title: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -155,7 +148,7 @@ const s = StyleSheet.create({
   total: {},
   transactionContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    backgroundColor: 'green',
   },
   categoryText: {
     fontFamily: fonts.CarosSoftMedium,
@@ -163,7 +156,6 @@ const s = StyleSheet.create({
     fontSize: 16,
   },
   descriptionText: {
-    marginRight: 48,
     fontFamily: fonts.CarosSoftMedium,
     color: theme.text.description,
   },
@@ -172,19 +164,17 @@ const s = StyleSheet.create({
     fontSize: 20,
     color: theme.colors.pink,
   },
-  transcation: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    marginVertical: 12,
-    flex: 1,
-  },
   section: {
-    marginHorizontal: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     flex: 1,
   },
-  emptyData: {
-    fontFamily: fonts.CarosSoftMedium,
-    textAlign: 'center',
+  sectionLeft: {
+    justifyContent: 'space-between',
+  },
+  sectionRight: {
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
   },
   image: {
     flex: 1,

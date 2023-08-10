@@ -1,6 +1,6 @@
 export const theme = {
   colors: {
-    primary: '#edede9',
+    primary: '#6574d3',
     secondary: '#d6ccc2',
     button: '#74a57f',
     btn: '#4f6d7a',
@@ -34,5 +34,5 @@ export const theme = {
     color: '#66c2db',
   },
   input: {color: '#caf0f8', text: '#adb5bd', bottomBorder: '#8d99ae'},
-  button: {text: '#ffffff', color: '#2196f3'},
+  button: {text: '#ffffff', color: '#6574d3'},
 };

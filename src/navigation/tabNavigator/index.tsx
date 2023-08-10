@@ -2,50 +2,60 @@ import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import HomeScreen from '../../screens/Home';
 import ProfileScreen from '../../screens/Profile';
-import {TouchableOpacity, View} from 'react-native';
+import {TouchableOpacity} from 'react-native';
 import AnalyticsScreen from '../../screens/Analytics';
 import NotificationScreen from '../../screens/Notification';
 import {Modalize, useModalize} from 'react-native-modalize';
 import TransactionForm from '../../screens/Transaction/TransactionForm';
-import {House, UserCircle, ChartBar, Bell, Plus} from 'phosphor-react-native';
+import {
+  House,
+  Bell,
+  Plus,
+  ArrowLeft,
+  ChartPieSlice,
+  User,
+} from 'phosphor-react-native';
+import {theme} from '../../utils';
 
 const Tab = createBottomTabNavigator();
-const IconSize = 36;
+const IconSize = 32;
 
 const HomeIcon = (focused: boolean) => (
   <House
     size={IconSize}
-    weight={focused ? 'fill' : 'regular'}
-    color="#99d98c"
+    color={theme.colors.primary}
+    weight={focused ? 'duotone' : 'regular'}
   />
 );
 const ProfileIcon = (focused: boolean) => (
-  <UserCircle
+  <User
     size={IconSize}
-    weight={focused ? 'fill' : 'regular'}
-    color="#a2d2ff"
+    color={theme.colors.primary}
+    weight={focused ? 'duotone' : 'regular'}
   />
 );
 const AnalyticsIcon = (focused: boolean) => (
-  <ChartBar
+  <ChartPieSlice
     size={IconSize}
-    weight={focused ? 'fill' : 'regular'}
-    color="#f5ee9e"
+    color={theme.colors.primary}
+    weight={focused ? 'duotone' : 'regular'}
   />
 );
 const NotificationIcon = (focused: boolean) => (
-  <Bell size={IconSize} weight={focused ? 'fill' : 'regular'} color="#084b83" />
+  <Bell
+    size={IconSize}
+    color={theme.colors.primary}
+    weight={focused ? 'duotone' : 'regular'}
+  />
 );
 
-const TransactionIcon = (open, focused: boolean) => (
-  <View>
-    <TouchableOpacity
-      onPress={() => {
-        open();
-      }}>
-      <Plus size={IconSize} weight={focused ? 'fill' : 'regular'} />
-    </TouchableOpacity>
-  </View>
+const TransactionIcon = open => (
+  <TouchableOpacity
+    onPress={() => {
+      open();
+    }}>
+    <Plus size={IconSize} color={theme.colors.primary} />
+  </TouchableOpacity>
 );
 
 const EmptyScreen = () => null;
@@ -70,8 +80,9 @@ const MainScreen = () => {
           component={HomeScreen}
           options={{
             tabBarIcon: ({focused}) => HomeIcon(focused),
-            tabBarShowLabel: false,
+            tabBarLabelStyle: {color: theme.colors.primary},
             headerShown: false,
+            tabBarShowLabel: false,
           }}
         />
         <Tab.Screen
@@ -79,15 +90,17 @@ const MainScreen = () => {
           component={AnalyticsScreen}
           options={{
             tabBarIcon: ({focused}) => AnalyticsIcon(focused),
+            headerShadowVisible: true,
+            headerLeft: () => <ArrowLeft size={32} />,
             tabBarShowLabel: false,
-            headerShown: false,
           }}
         />
         <Tab.Screen
           name="Transaction"
           component={EmptyScreen}
           options={{
-            tabBarIcon: ({focused}) => TransactionIcon(open, focused),
+            tabBarIcon: () => TransactionIcon(open),
+            tabBarShowLabel: false,
           }}
         />
         <Tab.Screen

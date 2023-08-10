@@ -11,6 +11,7 @@ export const apiClient = axios.create({
 export const updateTokenHeader = async () => {
   try {
     const token = await AsyncStorage.getItem('token');
+    console.log(token, ' token');
     if (token) {
       apiClient.defaults.headers.common['Token'] = token;
     } else {

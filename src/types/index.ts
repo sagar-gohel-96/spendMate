@@ -40,6 +40,24 @@ export interface TransactionSchemaEntity {
 
 export type CreateTransactionPayload = TransactionSchemaEntity;
 
-export type GetTransactionData = BaseEntity & CreateTransactionPayload;
+export type TransactionData = BaseEntity & CreateTransactionPayload;
 
 export type UpdateTransactionPayload = Partial<CreateTransactionPayload>;
+
+export enum NotificationStatus {
+  Read = 'read',
+  Unread = 'unread',
+}
+export interface NotificationEntity {
+  title: string;
+  message: string;
+  publishedAt: Date;
+  status: NotificationStatus;
+  imageUrl: string;
+}
+
+export type createNotificationPayload = BaseEntity & NotificationEntity;
+
+export type updateNotificationPayload = Partial<NotificationEntity>;
+
+export type NotificationData = BaseEntity & NotificationEntity;

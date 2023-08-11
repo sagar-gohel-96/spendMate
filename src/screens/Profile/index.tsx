@@ -1,5 +1,5 @@
 import React, {useCallback} from 'react';
-import {Avatar, Button} from 'react-native-paper';
+import {Avatar, Button} from 'react-native-ui-lib';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch, useSelector} from 'react-redux';
 import {setUser} from '../../features/user/userSlice';
@@ -14,7 +14,6 @@ const ProfileScreen = ({navigation}: any) => {
   } = useSelector((store: RootState) => store);
 
   const onConfirm = useCallback(async () => {
-    console.log(AsyncStorage.getAllKeys(), 'all keys');
     await AsyncStorage.clear();
     dispatch(setUser(null));
     navigation.navigate('LandingScreen' as never);
@@ -27,8 +26,8 @@ const ProfileScreen = ({navigation}: any) => {
   return (
     <View style={profileStyle.profileContainer}>
       <View style={profileStyle.banner}>
-        <Avatar.Text
-          style={profileStyle.profilepic}
+        <Avatar
+          containerStyle={profileStyle.profilepic}
           size={100}
           label={user ? user?.name.charAt(0).toUpperCase() : 'G'}
         />

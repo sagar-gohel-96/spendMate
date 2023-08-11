@@ -6,7 +6,7 @@ import {BannerImage} from '../../../assets/Image';
 import {fonts} from '../../../utils/fonts';
 import {theme} from '../../../utils/theme';
 import {useTransaction} from '../../../entity/hook/useTransaction';
-import {GetTransactionData, TransactionType} from '../../../types';
+import {TransactionData, TransactionType} from '../../../types';
 import {currency} from '../../../utils';
 import dayjs from 'dayjs';
 
@@ -23,7 +23,7 @@ const HomeBanner = () => {
         return 0;
       }
       const allTransactions = (getTransactions.data?.data ??
-        []) as GetTransactionData[];
+        []) as TransactionData[];
 
       const expenseTransactions = allTransactions.filter(
         t => t.transactionType === TransactionType.Expense,

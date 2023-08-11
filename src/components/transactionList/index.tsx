@@ -9,7 +9,7 @@ import {getIconStyle} from '../../../src/modules/core/Icon/useIconStyle';
 import {NoDataImage} from '../../assets/Image';
 import {
   CreateTransactionPayload,
-  GetTransactionData,
+  TransactionData,
   TransactionType,
 } from 'types';
 import {currency} from '../../utils';
@@ -63,7 +63,7 @@ const TransactionList = (props: TransactionListProps) => {
     return Math.abs(total) + currency;
   }, [getTransactions.data]);
 
-  const renderItem = ({item}: {item: GetTransactionData}) => {
+  const renderItem = ({item}: {item: TransactionData}) => {
     const style = getIconStyle(item.category as any);
     return (
       <TouchableOpacity
@@ -107,7 +107,7 @@ const TransactionList = (props: TransactionListProps) => {
       <Divider marginVertical={10} />
       {isLoading && <ActivityIndicator />}
       {getTransactions?.data?.data?.length > 0 ? (
-        getTransactions?.data?.data.map((item: GetTransactionData) =>
+        getTransactions?.data?.data.map((item: TransactionData) =>
           renderItem({item}),
         )
       ) : (

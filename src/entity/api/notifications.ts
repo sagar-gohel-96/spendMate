@@ -1,44 +1,44 @@
 import {
-  CreateTransactionPayload,
-  TransactionData,
-  UpdateTransactionPayload,
+  NotificationData,
+  CreateNotificationPayload,
+  UpdateNotificationPayload,
 } from 'types';
 import {apiClient} from '../apiClient';
 
-const getTransactions = async (): Promise<TransactionData[]> => {
-  const res = await apiClient.get('/transaction');
+const getNotifications = async (): Promise<NotificationData[]> => {
+  const res = await apiClient.get('/notification');
   return res.data;
 };
 
-const createTransactions = async (
-  payload: CreateTransactionPayload,
-): Promise<TransactionData> => {
-  const res = await apiClient.post('/transaction/create', payload);
+const createNotification = async (
+  payload: CreateNotificationPayload,
+): Promise<NotificationData> => {
+  const res = await apiClient.post('/notification/', payload);
   return res.data;
 };
 
-const updateTransactions = async (
+const updateNotification = async (
   id: string,
-  payload: UpdateTransactionPayload,
-): Promise<TransactionData> => {
-  const res = await apiClient.put(`/transaction/${id}`, payload);
+  payload: UpdateNotificationPayload,
+): Promise<NotificationData> => {
+  const res = await apiClient.put(`/notification/${id}`, payload);
   return res.data;
 };
 
-const deleteTransaction = async (id: string): Promise<TransactionData> => {
-  const res = await apiClient.delete(`/transaction/${id}`);
+const deleteNotification = async (id: string): Promise<NotificationData> => {
+  const res = await apiClient.delete(`/notification/${id}`);
   return res.data;
 };
 
-const getTransaction = async (id: string): Promise<TransactionData> => {
-  const res = await apiClient.get(`/transaction/${id}`);
+const getNotification = async (id: string): Promise<NotificationData> => {
+  const res = await apiClient.get(`/notification/${id}`);
   return res.data;
 };
 
-export const TransactionService = {
-  getTransactions,
-  createTransactions,
-  updateTransactions,
-  deleteTransaction,
-  getTransaction,
+export const NotificatonService = {
+  getNotifications,
+  createNotification,
+  updateNotification,
+  deleteNotification,
+  getNotification,
 };

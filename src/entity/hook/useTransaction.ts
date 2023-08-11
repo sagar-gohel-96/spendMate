@@ -16,8 +16,6 @@ export const useTransaction = (id?: string) => {
     isLoading: singleTransactionLoading,
     refetch: singleTransactionRefetch,
   } = useQuery(['get-single-transaction', id], async () => {
-    console.log('inside single transaction', id);
-
     if (id) {
       const transaction = await TransactionService.getTransaction(id);
       return transaction;

@@ -24,20 +24,20 @@ const ProfileScreen = ({navigation}: any) => {
   }, [navigation]);
 
   return (
-    <View style={profileStyle.profileContainer}>
-      <View style={profileStyle.banner}>
+    <View style={s.container}>
+      <View style={s.banner}>
         <Avatar
-          containerStyle={profileStyle.profilepic}
+          containerStyle={s.profilepic}
           size={100}
           label={user ? user?.name.charAt(0).toUpperCase() : 'G'}
         />
       </View>
-      <View style={profileStyle.profileDetails}>
-        <View style={profileStyle.detailContainer}>
-          <Text style={profileStyle.name}>{user?.name}</Text>
+      <View style={s.profileWrapper}>
+        <View style={s.deatailWrapper}>
+          <Text style={s.nameText}>{user?.name}</Text>
         </View>
-        <View style={profileStyle.detailContainer}>
-          <Text style={profileStyle.email}>{user?.email}</Text>
+        <View style={s.deatailWrapper}>
+          <Text style={s.emailText}>{user?.email}</Text>
         </View>
       </View>
       <View
@@ -48,12 +48,16 @@ const ProfileScreen = ({navigation}: any) => {
         <Button
           onPress={() => ShowAlert({onCancel, onConfirm})}
           mode="contained"
-          style={{borderRadius: 5, marginTop: 30, width: 120}}>
-          Logout
+          style={{
+            borderRadius: 5,
+            marginTop: 30,
+            width: 120,
+            color: theme.button.color,
+          }}>
+          <Text style={{color: theme.button.text}}>Logout</Text>
         </Button>
       </View>
     </View>
-    // </View>
   );
 };
 export default ProfileScreen;
@@ -78,14 +82,14 @@ const ShowAlert = (props: ShowAlertProps) => {
   ]);
 };
 
-const profileStyle = StyleSheet.create({
+const s = StyleSheet.create({
   banner: {
     backgroundColor: theme.input.color,
     height: 100,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  profileDetails: {marginTop: 42},
+  profileWrapper: {marginTop: 42},
   container: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -99,8 +103,7 @@ const profileStyle = StyleSheet.create({
     paddingBottom: 5,
     color: theme.colors.banner,
   },
-  profileContainer: {},
-  detailContainer: {
+  deatailWrapper: {
     flexDirection: 'row',
     justifyContent: 'center',
   },
@@ -109,13 +112,13 @@ const profileStyle = StyleSheet.create({
     color: theme.colors.banner,
     fontSize: 18,
   },
-  name: {
+  nameText: {
     fontFamily: fonts.CarosSoftBold,
     fontSize: 28,
     textTransform: 'capitalize',
     marginBottom: 6,
   },
-  email: {
+  emailText: {
     fontFamily: fonts.CarosSoftMedium,
     fontSize: 14,
   },

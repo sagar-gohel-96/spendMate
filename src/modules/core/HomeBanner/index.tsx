@@ -43,10 +43,6 @@ const HomeBanner = () => {
     [getTransactions.data],
   );
 
-  console.log(
-    calculateMonthlyTotalExpense(dayjs().month() - 1),
-    'last month data',
-  );
   const {
     headtag,
     moneytag,

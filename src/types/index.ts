@@ -56,8 +56,8 @@ export interface NotificationEntity {
   imageUrl: string;
 }
 
-export type createNotificationPayload = BaseEntity & NotificationEntity;
+export type CreateNotificationPayload = NotificationEntity;
 
-export type updateNotificationPayload = Partial<NotificationEntity>;
+export type UpdateNotificationPayload = Partial<NotificationEntity>;
 
 export type NotificationData = BaseEntity & NotificationEntity;

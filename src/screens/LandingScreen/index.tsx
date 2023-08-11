@@ -22,10 +22,8 @@ const LandingScreen = () => {
     if (!token) {
       navigation.navigate('AuthScreen' as never);
     } else {
-      console.log('fetch user');
       await updateTokenHeader();
       const res = await getUser.refetch();
-      console.log(res, 'res');
       dispatch(setUser(res.data));
       navigation.navigate('MainScreen' as never);
     }
